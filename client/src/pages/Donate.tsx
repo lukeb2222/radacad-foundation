@@ -11,15 +11,15 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 
 const DONATION_TIERS = [
-  { amount: 50, label: "Supporter", description: "Help cover course material costs for a student" },
-  { amount: 100, label: "Advocate", description: "Fund a week of online training access" },
-  { amount: 250, label: "Champion", description: "Cover certification exam fees for a student" },
-  { amount: 500, label: "Patron", description: "Sponsor a month of full program access" },
-  { amount: 1000, label: "Benefactor", description: "Fund a complete course enrollment" },
-  { amount: 5000, label: "Legacy Partner", description: "Make a transformative contribution to the fund" },
+  { amount: 50, label: "Supporter", description: "Help cover learning materials for a student" },
+  { amount: 100, label: "Advocate", description: "Fund a week of after-school club access" },
+  { amount: 250, label: "Champion", description: "Sponsor a month of tutoring sessions" },
+  { amount: 500, label: "Patron", description: "Cover a month of daytime RadAcad classes" },
+  { amount: 1000, label: "Benefactor", description: "Fund a full semester of small-group classes" },
+  { amount: 5000, label: "Legacy Partner", description: "Sponsor a student's full-year enrollment" },
 ];
 
-const GOAL = 500000;
+const GOAL = 50000;
 
 export default function Donate() {
   const [frequency, setFrequency] = useState<"one_time" | "monthly">("one_time");
@@ -76,14 +76,14 @@ export default function Donate() {
       <section className="hero-gradient pt-32 pb-16 md:pt-36 md:pb-20">
         <div className="container text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-white/70 mb-3 font-medium">
-            Support the Fund
+            Support Our Mission
           </p>
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Invest in Future Data Leaders
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            Donate to the <span className="italic text-teal-300">Foundation</span>
           </h1>
           <p className="text-white/80 max-w-xl mx-auto">
-            Every contribution helps an aspiring data professional access world-class
-            education they otherwise could not afford.
+            Your contribution directly funds scholarships for students who cannot afford
+            Radical Minds Academy programs. Every dollar makes a difference.
           </p>
         </div>
       </section>
@@ -92,25 +92,25 @@ export default function Donate() {
       <section className="py-16">
         <div className="container max-w-3xl">
           <div className="text-center mb-8">
-            <p className="text-sm uppercase tracking-[0.2em] text-accent font-semibold mb-2">
+            <p className="text-sm uppercase tracking-[0.2em] text-primary font-semibold mb-2">
               <TrendingUp className="inline h-4 w-4 mr-1" /> Fundraising Progress
             </p>
-            <h2 className="text-2xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h2 className="text-2xl font-bold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Scholarship Fund
             </h2>
           </div>
 
           <div className="mb-4">
             <div className="flex justify-between items-end mb-2">
-              <span className="text-3xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+              <span className="text-3xl font-bold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
                 ${totalRaised.toLocaleString()}
               </span>
-              <span className="text-lg font-semibold text-accent">{progress.toFixed(0)}%</span>
+              <span className="text-lg font-semibold text-primary">{progress.toFixed(0)}%</span>
             </div>
-            <div className="w-full h-3 bg-muted rounded-full overflow-hidden">
+            <div className="w-full h-3 bg-muted overflow-hidden" style={{ borderRadius: "var(--radius)" }}>
               <div
-                className="h-full bg-accent rounded-full transition-all duration-1000"
-                style={{ width: `${progress}%` }}
+                className="h-full bg-primary transition-all duration-1000"
+                style={{ width: `${progress}%`, borderRadius: "var(--radius)" }}
               />
             </div>
             <div className="flex justify-between text-xs text-muted-foreground mt-2">
@@ -124,11 +124,11 @@ export default function Donate() {
             {[
               { icon: Heart, value: "100%", label: "Goes to the Scholar" },
               { icon: Users, value: "50+", label: "Lives Changed" },
-              { icon: TrendingUp, value: "$200K+", label: "Annual Award Value" },
-              { icon: Calendar, value: "2024", label: "Inaugural Year" },
+              { icon: TrendingUp, value: "$200K+", label: "Total Funded" },
+              { icon: Calendar, value: "2024", label: "Founded" },
             ].map((stat, i) => (
               <div key={i} className="text-center">
-                <stat.icon className="h-6 w-6 text-accent mx-auto mb-2" />
+                <stat.icon className="h-6 w-6 text-primary mx-auto mb-2" />
                 <p className="text-xl font-bold">{stat.value}</p>
                 <p className="text-xs text-muted-foreground">{stat.label}</p>
               </div>
@@ -138,13 +138,13 @@ export default function Donate() {
       </section>
 
       {/* Donation Form */}
-      <section className="section-cream py-16">
+      <section className="section-light py-16">
         <div className="container max-w-4xl">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Left: Tiers */}
             <div className="lg:col-span-3">
-              <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Playfair Display', serif" }}>
-                Choose Your Impact
+              <h2 className="text-2xl font-bold mb-2" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                Choose Your <span className="text-primary italic">Impact</span>
               </h2>
               <p className="text-sm text-muted-foreground mb-6">
                 Select a giving level or enter a custom amount.
@@ -156,6 +156,7 @@ export default function Donate() {
                   variant={frequency === "one_time" ? "default" : "outline"}
                   onClick={() => setFrequency("one_time")}
                   size="sm"
+                  className={frequency === "one_time" ? "bg-primary text-white" : ""}
                 >
                   One-Time
                 </Button>
@@ -163,6 +164,7 @@ export default function Donate() {
                   variant={frequency === "monthly" ? "default" : "outline"}
                   onClick={() => setFrequency("monthly")}
                   size="sm"
+                  className={frequency === "monthly" ? "bg-primary text-white" : ""}
                 >
                   Monthly
                 </Button>
@@ -177,15 +179,16 @@ export default function Donate() {
                       setSelectedAmount(tier.amount);
                       setCustomAmount("");
                     }}
-                    className={`text-left p-4 rounded-lg border transition-all ${
+                    className={`text-left p-4 border transition-all ${
                       selectedAmount === tier.amount
-                        ? "border-accent bg-accent/5 ring-2 ring-accent"
-                        : "border-border bg-white hover:border-accent/50"
+                        ? "border-primary bg-primary/5 ring-2 ring-primary"
+                        : "border-border bg-white hover:border-primary/50"
                     }`}
+                    style={{ borderRadius: "var(--radius)" }}
                   >
                     <div className="flex items-baseline gap-2">
                       <span className="text-xl font-bold">${tier.amount.toLocaleString()}</span>
-                      <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+                      <span className="text-xs font-semibold uppercase tracking-wider text-primary">
                         {tier.label}
                       </span>
                     </div>
@@ -216,7 +219,7 @@ export default function Donate() {
 
             {/* Right: Info form */}
             <div className="lg:col-span-2">
-              <Card>
+              <Card style={{ borderRadius: "var(--radius)" }}>
                 <CardContent className="p-6 space-y-4">
                   <h3 className="font-bold text-lg">Your Information</h3>
                   <div>
@@ -252,7 +255,7 @@ export default function Donate() {
                       <span className="font-semibold">{frequency === "monthly" ? "Monthly" : "One-Time"}</span>
                     </div>
                     <Button
-                      className="w-full bg-accent hover:bg-accent/90 text-white font-semibold"
+                      className="w-full bg-primary hover:bg-primary/90 text-white font-semibold"
                       onClick={handleDonate}
                       disabled={checkoutMutation.isPending || effectiveAmount < 1}
                     >
@@ -265,14 +268,16 @@ export default function Donate() {
                   </div>
 
                   {/* Bank transfer note */}
-                  <div className="bg-muted/50 rounded-lg p-3 mt-4">
+                  <div className="bg-muted/50 p-3 mt-4" style={{ borderRadius: "var(--radius)" }}>
                     <div className="flex items-start gap-2">
-                      <Building className="h-4 w-4 text-accent mt-0.5 shrink-0" />
+                      <Building className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                       <div>
                         <p className="text-xs font-medium">Bank Transfer Available</p>
                         <p className="text-xs text-muted-foreground">
-                          For larger donations, you can pay by bank transfer (ACH) at checkout to avoid
-                          credit card processing fees.
+                          For larger donations or bank transfers, contact us at{" "}
+                          <a href="mailto:garrett.austen@tetontutors.org" className="text-primary hover:underline">
+                            garrett.austen@tetontutors.org
+                          </a>
                         </p>
                       </div>
                     </div>
@@ -287,14 +292,14 @@ export default function Donate() {
       {/* Where Donation Goes */}
       <section className="py-16">
         <div className="container max-w-3xl text-center">
-          <h2 className="text-2xl font-bold mb-8" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Where Your Donation Goes
+          <h2 className="text-2xl font-bold mb-8" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            Where Your <span className="text-primary italic">Donation</span> Goes
           </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              { title: "Program Tuition", desc: "Covers the complete cost of attending RadAcad's data analytics training programs." },
-              { title: "Certification Fees", desc: "Funds official Microsoft and industry certification exam fees for scholars." },
-              { title: "Learning Materials", desc: "Provides access to premium datasets, tools, and supplementary learning resources." },
+              { title: "Program Tuition", desc: "Covers the cost of attending RadAcad's daytime classes, after-school clubs, and summer camps." },
+              { title: "One-on-One Coaching", desc: "Funds individualized academic coaching and tutoring sessions for scholarship students." },
+              { title: "Learning Materials", desc: "Provides access to online school platforms, supplies, and enrichment activities." },
             ].map((item, i) => (
               <div key={i}>
                 <h3 className="font-bold text-foreground mb-2">{item.title}</h3>

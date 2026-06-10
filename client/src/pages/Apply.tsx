@@ -64,27 +64,78 @@ export default function Apply() {
     setReferrals(updated);
   };
 
+  const validateStep = (s: number): boolean => {
+    switch (s) {
+      case 1:
+        if (!firstName.trim() || !lastName.trim() || !email.trim()) {
+          toast.error("Please fill in your first name, last name, and email address.");
+          return false;
+        }
+        if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+          toast.error("Please enter a valid email address.");
+          return false;
+        }
+        return true;
+      case 2:
+        if (!programInterest) {
+          toast.error("Please select a program you are interested in.");
+          return false;
+        }
+        return true;
+      case 3:
+        if (!amountRequested.trim()) {
+          toast.error("Please enter the amount of funding you are requesting.");
+          return false;
+        }
+        return true;
+      case 4:
+        if (!essay.trim()) {
+          toast.error("Please write your personal statement / essay.");
+          return false;
+        }
+        return true;
+      case 5:
+        const validRefs = referrals.filter(
+          (r) => r.referrerName.trim() && r.referrerEmail.trim() && r.relationship.trim()
+        );
+        if (validRefs.length === 0) {
+          toast.error("Please provide at least one complete referral.");
+          return false;
+        }
+        return true;
+      default:
+        return true;
+    }
+  };
+
+  const goNext = () => {
+    if (validateStep(step)) {
+      setStep(step + 1);
+    }
+  };
+
   const handleSubmit = () => {
+    if (!validateStep(step)) return;
     const validReferrals = referrals.filter(
-      (r) => r.referrerName && r.referrerEmail && r.relationship
+      (r) => r.referrerName.trim() && r.referrerEmail.trim() && r.relationship.trim()
     );
     submitMutation.mutate({
-      firstName,
-      lastName,
-      email,
-      phone: phone || undefined,
+      firstName: firstName.trim(),
+      lastName: lastName.trim(),
+      email: email.trim(),
+      phone: phone.trim() || undefined,
       dateOfBirth: dateOfBirth || undefined,
-      address: address || undefined,
-      city: city || undefined,
-      state: state || undefined,
-      zipCode: zipCode || undefined,
-      country: country || undefined,
+      address: address.trim() || undefined,
+      city: city.trim() || undefined,
+      state: state.trim() || undefined,
+      zipCode: zipCode.trim() || undefined,
+      country: country.trim() || undefined,
       programInterest,
       currentEducation: currentEducation || undefined,
       employmentStatus: employmentStatus || undefined,
-      amountRequested,
-      financialStatement: financialStatement || undefined,
-      essay,
+      amountRequested: amountRequested.trim(),
+      financialStatement: financialStatement.trim() || undefined,
+      essay: essay.trim(),
       referrals: validReferrals,
     });
   };
@@ -97,14 +148,14 @@ export default function Apply() {
         <Navbar />
         <div className="flex-1 flex items-center justify-center pt-20">
           <div className="text-center max-w-md mx-auto px-4">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-              <Check className="h-8 w-8 text-green-600" />
+            <div className="w-16 h-16 bg-primary/10 flex items-center justify-center mx-auto mb-6" style={{ borderRadius: "var(--radius)" }}>
+              <Check className="h-8 w-8 text-primary" />
             </div>
-            <h1 className="text-3xl font-bold text-foreground mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h1 className="text-3xl font-bold text-foreground mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Application Submitted
             </h1>
             <p className="text-muted-foreground leading-relaxed">
-              Thank you for applying to the RadAcad Foundation Scholarship. Our committee
+              Thank you for applying to the RadAcad Foundation Scholarship. Our team
               will review your application and contact you at the email address provided.
             </p>
           </div>
@@ -124,12 +175,12 @@ export default function Apply() {
           <p className="text-sm uppercase tracking-[0.3em] text-white/70 mb-3 font-medium">
             Scholarship Application
           </p>
-          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
-            Apply for Funding
+          <h1 className="text-3xl md:text-5xl font-bold text-white mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            Apply for <span className="italic text-teal-300">Funding</span>
           </h1>
           <p className="text-white/80 max-w-xl mx-auto">
-            Complete the application below to be considered for a RadAcad Foundation scholarship.
-            All fields marked with * are required.
+            Complete the application below to be considered for a RadAcad Foundation scholarship
+            covering Radical Minds Academy programs.
           </p>
         </div>
       </section>
@@ -141,13 +192,14 @@ export default function Apply() {
             {["Personal Info", "Program", "Financial", "Essay", "Referrals"].map((label, i) => (
               <div key={i} className="flex items-center">
                 <div
-                  className={`w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold ${
+                  className={`w-8 h-8 flex items-center justify-center text-xs font-bold ${
                     step > i + 1
-                      ? "bg-green-500 text-white"
+                      ? "bg-primary text-white"
                       : step === i + 1
-                      ? "bg-accent text-white"
+                      ? "bg-primary text-white"
                       : "bg-muted text-muted-foreground"
                   }`}
+                  style={{ borderRadius: "var(--radius)" }}
                 >
                   {step > i + 1 ? <Check className="h-4 w-4" /> : i + 1}
                 </div>
@@ -162,20 +214,20 @@ export default function Apply() {
       {/* Form */}
       <section className="py-12 flex-1">
         <div className="container max-w-2xl">
-          <Card>
+          <Card style={{ borderRadius: "var(--radius)" }}>
             <CardContent className="p-8">
               {/* Step 1: Personal Info */}
               {step === 1 && (
                 <div className="space-y-5">
-                  <h2 className="text-xl font-bold text-foreground mb-6">Personal Information</h2>
+                  <h2 className="text-xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Personal Information</h2>
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="firstName">First Name *</Label>
-                      <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="John" />
+                      <Input id="firstName" value={firstName} onChange={(e) => setFirstName(e.target.value)} placeholder="First name" />
                     </div>
                     <div>
                       <Label htmlFor="lastName">Last Name *</Label>
-                      <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Doe" />
+                      <Input id="lastName" value={lastName} onChange={(e) => setLastName(e.target.value)} placeholder="Last name" />
                     </div>
                   </div>
                   <div>
@@ -185,7 +237,7 @@ export default function Apply() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
                       <Label htmlFor="phone">Phone</Label>
-                      <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (555) 000-0000" />
+                      <Input id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="+1 (307) 000-0000" />
                     </div>
                     <div>
                       <Label htmlFor="dob">Date of Birth</Label>
@@ -199,19 +251,19 @@ export default function Apply() {
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div>
                       <Label htmlFor="city">City</Label>
-                      <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} />
+                      <Input id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Jackson" />
                     </div>
                     <div>
                       <Label htmlFor="state">State</Label>
-                      <Input id="state" value={state} onChange={(e) => setState(e.target.value)} />
+                      <Input id="state" value={state} onChange={(e) => setState(e.target.value)} placeholder="WY" />
                     </div>
                     <div>
                       <Label htmlFor="zip">ZIP</Label>
-                      <Input id="zip" value={zipCode} onChange={(e) => setZipCode(e.target.value)} />
+                      <Input id="zip" value={zipCode} onChange={(e) => setZipCode(e.target.value)} placeholder="83001" />
                     </div>
                     <div>
                       <Label htmlFor="country">Country</Label>
-                      <Input id="country" value={country} onChange={(e) => setCountry(e.target.value)} />
+                      <Input id="country" value={country} onChange={(e) => setCountry(e.target.value)} placeholder="US" />
                     </div>
                   </div>
                 </div>
@@ -220,7 +272,7 @@ export default function Apply() {
               {/* Step 2: Program */}
               {step === 2 && (
                 <div className="space-y-5">
-                  <h2 className="text-xl font-bold text-foreground mb-6">Program Interest</h2>
+                  <h2 className="text-xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Program Interest</h2>
                   <div>
                     <Label htmlFor="program">Which RadAcad program are you applying for? *</Label>
                     <Select value={programInterest} onValueChange={setProgramInterest}>
@@ -228,14 +280,44 @@ export default function Apply() {
                         <SelectValue placeholder="Select a program" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="Power BI Comprehensive">Power BI Comprehensive</SelectItem>
-                        <SelectItem value="Data Analytics Bootcamp">Data Analytics Bootcamp</SelectItem>
-                        <SelectItem value="Advanced DAX & Modeling">Advanced DAX & Modeling</SelectItem>
-                        <SelectItem value="Full Stack Data Professional">Full Stack Data Professional</SelectItem>
+                        <SelectItem value="Daytime RadAcad Classes">Daytime RadAcad Classes</SelectItem>
+                        <SelectItem value="After School Clubs">After School Clubs</SelectItem>
+                        <SelectItem value="Summer Camps">Summer Camps</SelectItem>
+                        <SelectItem value="One-on-One Tutoring">One-on-One Tutoring</SelectItem>
+                        <SelectItem value="Small-Group Classes">Small-Group Classes</SelectItem>
+                        <SelectItem value="Online School Support">Online School Support</SelectItem>
                         <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
+
+                  {/* Program Overview */}
+                  <div className="bg-section-light border border-border p-4 mt-4" style={{ borderRadius: "var(--radius)" }}>
+                    <h3 className="font-semibold text-sm mb-2 text-primary">Program Overviews</h3>
+                    <div className="space-y-3 text-sm text-muted-foreground">
+                      <div>
+                        <p className="font-medium text-foreground">Daytime RadAcad Classes</p>
+                        <p>Full-day personalized learning combining online school support, small-group classes, and one-on-one instruction.</p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">After School Clubs</p>
+                        <p>Seasonal enrichment clubs (Fall, Winter, Spring) focused on flexible, personalized learning.</p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">Summer Camps</p>
+                        <p>Immersive summer programs combining outdoor adventure with academic enrichment.</p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">One-on-One Tutoring</p>
+                        <p>Individualized instruction tailored to each student's goals and schedule.</p>
+                      </div>
+                      <div>
+                        <p className="font-medium text-foreground">Online School Support</p>
+                        <p>Academic coaching for students enrolled in partner online schools (Virtual Prep, Aeon School, ICL Academy, Laurel Springs).</p>
+                      </div>
+                    </div>
+                  </div>
+
                   <div>
                     <Label htmlFor="education">Current Education Level</Label>
                     <Select value={currentEducation} onValueChange={setCurrentEducation}>
@@ -243,18 +325,16 @@ export default function Apply() {
                         <SelectValue placeholder="Select education level" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="High School">High School</SelectItem>
-                        <SelectItem value="Some College">Some College</SelectItem>
-                        <SelectItem value="Associate Degree">Associate Degree</SelectItem>
-                        <SelectItem value="Bachelor's Degree">Bachelor's Degree</SelectItem>
-                        <SelectItem value="Master's Degree">Master's Degree</SelectItem>
-                        <SelectItem value="Doctorate">Doctorate</SelectItem>
+                        <SelectItem value="Middle School (6th-8th)">Middle School (6th-8th)</SelectItem>
+                        <SelectItem value="High School (9th-12th)">High School (9th-12th)</SelectItem>
+                        <SelectItem value="Homeschool">Homeschool</SelectItem>
+                        <SelectItem value="Online School">Online School</SelectItem>
                         <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
                   <div>
-                    <Label htmlFor="employment">Employment Status</Label>
+                    <Label htmlFor="employment">Parent/Guardian Employment Status</Label>
                     <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
                       <SelectTrigger>
                         <SelectValue placeholder="Select employment status" />
@@ -264,7 +344,7 @@ export default function Apply() {
                         <SelectItem value="Employed Part-Time">Employed Part-Time</SelectItem>
                         <SelectItem value="Self-Employed">Self-Employed</SelectItem>
                         <SelectItem value="Unemployed">Unemployed</SelectItem>
-                        <SelectItem value="Student">Student</SelectItem>
+                        <SelectItem value="Retired">Retired</SelectItem>
                         <SelectItem value="Other">Other</SelectItem>
                       </SelectContent>
                     </Select>
@@ -275,7 +355,7 @@ export default function Apply() {
               {/* Step 3: Financial */}
               {step === 3 && (
                 <div className="space-y-5">
-                  <h2 className="text-xl font-bold text-foreground mb-6">Financial Information</h2>
+                  <h2 className="text-xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Financial Information</h2>
                   <div>
                     <Label htmlFor="amount">Amount of Funding Requested (USD) *</Label>
                     <Input
@@ -296,11 +376,11 @@ export default function Apply() {
                       id="financial"
                       value={financialStatement}
                       onChange={(e) => setFinancialStatement(e.target.value)}
-                      placeholder="Please describe your current financial situation and why you need scholarship assistance..."
+                      placeholder="Please describe your family's current financial situation and why you need scholarship assistance..."
                       rows={6}
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Explain your financial circumstances and why you are unable to cover the program costs.
+                      Explain your financial circumstances and why your family is unable to cover the program costs.
                     </p>
                   </div>
                 </div>
@@ -309,19 +389,19 @@ export default function Apply() {
               {/* Step 4: Essay */}
               {step === 4 && (
                 <div className="space-y-5">
-                  <h2 className="text-xl font-bold text-foreground mb-6">Personal Statement</h2>
+                  <h2 className="text-xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Personal Statement</h2>
                   <div>
                     <Label htmlFor="essay">Essay / Personal Statement *</Label>
                     <Textarea
                       id="essay"
                       value={essay}
                       onChange={(e) => setEssay(e.target.value)}
-                      placeholder="Tell us about yourself, your goals, and how this scholarship will help you achieve them..."
+                      placeholder="Tell us about the student, their goals, and how this scholarship will help them..."
                       rows={10}
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                      Minimum 200 words. Tell us about your background, career goals, and how data analytics
-                      education will impact your life and community.
+                      Minimum 200 words. Tell us about the student's background, learning goals, and how
+                      flexible education at RadAcad will impact their life and future.
                     </p>
                   </div>
                 </div>
@@ -330,12 +410,12 @@ export default function Apply() {
               {/* Step 5: Referrals */}
               {step === 5 && (
                 <div className="space-y-5">
-                  <h2 className="text-xl font-bold text-foreground mb-6">Referrals</h2>
+                  <h2 className="text-xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Referrals</h2>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Please provide at least one referral who can speak to your character and qualifications.
+                    Please provide at least one referral who can speak to the student's character and qualifications.
                   </p>
                   {referrals.map((ref, index) => (
-                    <div key={index} className="border border-border rounded-lg p-4 space-y-3">
+                    <div key={index} className="border border-border p-4 space-y-3" style={{ borderRadius: "var(--radius)" }}>
                       <div className="flex justify-between items-center">
                         <span className="text-sm font-medium">Referral {index + 1}</span>
                         {referrals.length > 1 && (
@@ -366,7 +446,7 @@ export default function Apply() {
                         <Input
                           value={ref.relationship}
                           onChange={(e) => updateReferral(index, "relationship", e.target.value)}
-                          placeholder="e.g. Manager, Professor, Mentor"
+                          placeholder="e.g. Teacher, Coach, Counselor"
                         />
                       </div>
                     </div>
@@ -387,14 +467,14 @@ export default function Apply() {
                   <div />
                 )}
                 {step < totalSteps ? (
-                  <Button onClick={() => setStep(step + 1)}>
+                  <Button onClick={goNext} className="bg-primary hover:bg-primary/90 text-white">
                     Next <ArrowRight className="h-4 w-4 ml-2" />
                   </Button>
                 ) : (
                   <Button
                     onClick={handleSubmit}
                     disabled={submitMutation.isPending}
-                    className="bg-accent hover:bg-accent/90"
+                    className="bg-primary hover:bg-primary/90 text-white"
                   >
                     {submitMutation.isPending ? "Submitting..." : "Submit Application"}
                   </Button>

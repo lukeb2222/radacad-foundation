@@ -109,7 +109,7 @@ export default function Dashboard() {
       <div className="min-h-screen flex items-center justify-center">
         <Card className="max-w-md w-full mx-4">
           <CardContent className="p-8 text-center">
-            <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Playfair Display', serif" }}>
+            <h1 className="text-2xl font-bold mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Admin Dashboard
             </h1>
             <p className="text-muted-foreground mb-6">
@@ -318,7 +318,7 @@ export default function Dashboard() {
       {/* Header */}
       <div className="border-b bg-white">
         <div className="container py-4 flex items-center justify-between">
-          <h1 className="text-xl font-bold" style={{ fontFamily: "'Playfair Display', serif" }}>
+          <h1 className="text-xl font-bold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             RadAcad Foundation Admin
           </h1>
           <div className="flex items-center gap-4">

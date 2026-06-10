@@ -21,3 +21,10 @@
 - [x] Footer with "This website was made by Webadi" credit
 - [x] Responsive design matching Max Martin Scholarships style
 - [x] Direct dashboard access at /dashboard (auth-gated, no passcode needed)
+- [x] Use actual RadAcad logo in navbar and site branding
+- [x] Retheme entire site to match RadAcad/Radical Minds Academy style (angular, no circles/rounded elements)
+- [x] Add program overviews from actual RadAcad offerings
+- [x] Pull application info from RadAcad website
+- [x] Refine Donate page with tiered giving and Stripe checkout
+- [x] Refine Apply page with multi-step form and actual RadAcad programs
+- [x] Ensure admin dashboard properly reviews applications and shows donations

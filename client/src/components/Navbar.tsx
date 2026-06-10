@@ -7,20 +7,22 @@ export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const links = [
-    { href: "/", label: "HOME" },
-    { href: "/apply", label: "APPLY" },
-    { href: "/donate", label: "DONATE" },
-    { href: "/contact", label: "CONTACT" },
+    { href: "/", label: "Home" },
+    { href: "/apply", label: "Apply" },
+    { href: "/donate", label: "Donate" },
+    { href: "/contact", label: "Contact" },
   ];
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
       <div className="container flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-2 no-underline">
-          <span className="text-xl font-bold text-primary tracking-tight" style={{ fontFamily: "'Playfair Display', serif" }}>
-            RadAcad
-          </span>
-          <span className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">
+        <Link href="/" className="flex items-center gap-3 no-underline">
+          <img
+            src="/manus-storage/radacad_logo_b7e2f890.png"
+            alt="RadAcad"
+            className="h-9"
+          />
+          <span className="text-sm font-semibold tracking-wide text-primary">
             Foundation
           </span>
         </Link>
@@ -31,10 +33,10 @@ export default function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className={`text-sm font-semibold tracking-wide no-underline transition-colors ${
+              className={`text-sm font-medium tracking-wide no-underline transition-colors ${
                 location === link.href
                   ? "text-primary border-b-2 border-primary pb-0.5"
-                  : "text-muted-foreground hover:text-primary"
+                  : "text-foreground/70 hover:text-primary"
               }`}
             >
               {link.label}
@@ -59,8 +61,8 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm font-semibold tracking-wide no-underline ${
-                  location === link.href ? "text-primary" : "text-muted-foreground"
+                className={`text-sm font-medium tracking-wide no-underline ${
+                  location === link.href ? "text-primary" : "text-foreground/70"
                 }`}
                 onClick={() => setMobileOpen(false)}
               >
