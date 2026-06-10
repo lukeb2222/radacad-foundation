@@ -1,0 +1,23 @@
+# Project TODO
+
+- [x] Database schema (applications, referrals, donations, messages, admin notes)
+- [x] Backend tRPC routes for applications (create, list, get, update status, add notes)
+- [x] Backend tRPC routes for donations (create via Stripe, list, getTotal)
+- [x] Backend tRPC routes for messages (create, list, markRead)
+- [x] Stripe integration for donation payments (one-time and recurring)
+- [x] Owner notification on new application, donation, or message
+- [x] Home page with hero, mission, programs, impact stats, CTA sections
+- [x] Apply page with multi-step form (personal info, program, financial need, essay, referrals)
+- [x] Donate page with progress bar, tiered giving, custom amount, Stripe checkout
+- [x] Message/Contact page with inquiry form
+- [x] Admin dashboard - login protected (admin role only)
+- [x] Admin dashboard - Applications tab with list view, detail view, status updates, notes
+- [x] Admin dashboard - Messages tab
+- [x] Admin dashboard - Donations tab with tracking
+- [x] Admin dashboard - Notes system with author attribution
+- [x] Admin dashboard - AI analysis for submissions
+- [x] Automated donation amount tracking (auto-update raised total)
+- [x] Bank transfer info note on donate page
+- [x] Footer with "This website was made by Webadi" credit
+- [x] Responsive design matching Max Martin Scholarships style
+- [x] Direct dashboard access at /dashboard (auth-gated, no passcode needed)
