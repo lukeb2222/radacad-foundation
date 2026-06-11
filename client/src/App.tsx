@@ -20,6 +20,7 @@ function Router() {
       <Route path={"/donate/success"} component={DonateSuccess} />
       <Route path={"/contact"} component={Contact} />
       <Route path={"/dashboard"} component={Dashboard} />
+      <Route path={"/admin"} component={Dashboard} />
       <Route path={"/404"} component={NotFound} />
       <Route component={NotFound} />
     </Switch>
