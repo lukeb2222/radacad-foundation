@@ -37,6 +37,9 @@ export const applications = mysqlTable("applications", {
     .default("pending")
     .notNull(),
   aiAnalysis: text("aiAnalysis"),
+  aiAnalysisGeneratedAt: timestamp("aiAnalysisGeneratedAt"),
+  overallScore: int("overallScore"),
+  committeeNotes: text("committeeNotes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
 });
@@ -70,6 +73,8 @@ export const donations = mysqlTable("donations", {
     .default("pending")
     .notNull(),
   note: text("note"),
+  thankYouSent: boolean("thankYouSent").default(false).notNull(),
+  address: text("address"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -84,6 +89,7 @@ export const messages = mysqlTable("messages", {
   subject: varchar("subject", { length: 256 }).notNull(),
   message: text("message").notNull(),
   isRead: boolean("isRead").default(false).notNull(),
+  isArchived: boolean("isArchived").default(false).notNull(),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
 });
 
@@ -102,6 +108,76 @@ export const applicationNotes = mysqlTable("applicationNotes", {
 
 export type ApplicationNote = typeof applicationNotes.$inferSelect;
 export type InsertApplicationNote = typeof applicationNotes.$inferInsert;
+
+export const committeeReviews = mysqlTable("committeeReviews", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull(),
+  reviewerName: varchar("reviewerName", { length: 256 }).notNull(),
+  reviewerEmail: varchar("reviewerEmail", { length: 320 }),
+  score: int("score").notNull(),
+  notes: text("notes"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type CommitteeReview = typeof committeeReviews.$inferSelect;
+export type InsertCommitteeReview = typeof committeeReviews.$inferInsert;
+
+export const committeeMembers = mysqlTable("committeeMembers", {
+  id: int("id").autoincrement().primaryKey(),
+  name: varchar("name", { length: 256 }).notNull(),
+  email: varchar("email", { length: 320 }).notNull().unique(),
+  lastLogin: timestamp("lastLogin").defaultNow().notNull(),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CommitteeMember = typeof committeeMembers.$inferSelect;
+export type InsertCommitteeMember = typeof committeeMembers.$inferInsert;
+
+export const committeeFiles = mysqlTable("committeeFiles", {
+  id: int("id").autoincrement().primaryKey(),
+  applicationId: int("applicationId").notNull(),
+  filename: varchar("filename", { length: 512 }).notNull(),
+  fileUrl: text("fileUrl").notNull(),
+  fileKey: varchar("fileKey", { length: 512 }).notNull(),
+  fileSize: int("fileSize"),
+  mimeType: varchar("mimeType", { length: 128 }),
+  category: mysqlEnum("fileCategory", ["report_card", "recommendation", "grades", "other"])
+    .default("other")
+    .notNull(),
+  description: text("description"),
+  uploaderName: varchar("uploaderName", { length: 256 }),
+  extractedText: text("extractedText"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type CommitteeFile = typeof committeeFiles.$inferSelect;
+export type InsertCommitteeFile = typeof committeeFiles.$inferInsert;
+
+export const dashboardAccessTokens = mysqlTable("dashboardAccessTokens", {
+  id: int("id").autoincrement().primaryKey(),
+  token: varchar("token", { length: 128 }).notNull().unique(),
+  label: varchar("label", { length: 256 }).notNull(),
+  isActive: boolean("isActive").default(true).notNull(),
+  lastUsed: timestamp("lastUsed"),
+  createdAt: timestamp("createdAt").defaultNow().notNull(),
+});
+
+export type DashboardAccessToken = typeof dashboardAccessTokens.$inferSelect;
+export type InsertDashboardAccessToken = typeof dashboardAccessTokens.$inferInsert;
+
+export const fundraisingConfig = mysqlTable("fundraisingConfig", {
+  id: int("id").autoincrement().primaryKey(),
+  goalAmount: decimal("goalAmount", { precision: 10, scale: 2 }).notNull(),
+  currentAmount: decimal("currentAmount", { precision: 10, scale: 2 }).default("0").notNull(),
+  campaignTitle: varchar("campaignTitle", { length: 256 }).notNull(),
+  description: text("description"),
+  isActive: boolean("isActive").default(true).notNull(),
+  updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
+});
+
+export type FundraisingConfig = typeof fundraisingConfig.$inferSelect;
+export type InsertFundraisingConfig = typeof fundraisingConfig.$inferInsert;
 
 export const siteSettings = mysqlTable("siteSettings", {
   id: int("id").autoincrement().primaryKey(),

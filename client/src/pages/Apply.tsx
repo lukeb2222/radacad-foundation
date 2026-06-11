@@ -10,6 +10,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 type Referral = { referrerName: string; referrerEmail: string; relationship: string };
 
@@ -165,8 +166,10 @@ export default function Apply() {
     );
   }
 
+  const scrollRef = useScrollAnimation();
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" ref={scrollRef}>
       <Navbar />
 
       {/* Hero */}
@@ -217,7 +220,7 @@ export default function Apply() {
 
       {/* Form */}
       <section className="py-12 flex-1">
-        <div className="container max-w-2xl">
+        <div className="container max-w-2xl animate-on-scroll">
           <Card style={{ borderRadius: "var(--radius)" }}>
             <CardContent className="p-8">
               {/* Step 1: Personal Info */}

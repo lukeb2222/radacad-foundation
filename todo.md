@@ -29,3 +29,19 @@
 - [x] Refine Apply page with multi-step form and actual RadAcad programs
 - [x] Ensure admin dashboard properly reviews applications and shows donations
 - [x] Include images from the current Radical Minds Academy website throughout the Foundation site
+- [x] Remove "$200K+ Total Funded" stat from home and donate pages
+- [x] Add RadAcad online school partners section (Virtual Prep Academy, Aeon School, ICL Academy, Laurel Springs)
+- [x] Add scroll-triggered animations (fade-in, slide-up) on public pages (Home, Apply, Donate, Contact)
+- [ ] Rebuild admin dashboard to match Max Martin structure (themed to RadAcad)
+- [ ] Add committee password access + access link tokens (dual-access model)
+- [ ] Add committee member registration (name/email prompt on first login)
+- [ ] Add committee reviews system (individual scores 0-100, notes, attribution)
+- [ ] Add committee file uploads (documents tab with PDF upload, categories, text extraction)
+- [ ] Add AI analysis tab for applications (LLM-powered strengths/weaknesses)
+- [ ] Add Analytics tab with demographics, submission trends, fundraising settings
+- [ ] Add Access Links management in Analytics tab
+- [ ] Add CSV export for applications and donors
+- [ ] Add auto-refresh every 60 seconds
+- [ ] Add applicant detail dialog with 5 tabs (Overview, Essays, Documents, Reviews, AI Analysis)
+- [ ] Theme dashboard to RadAcad teal/green branding (not warm/gold Max Martin colors)
+- [ ] Rebuild public pages to look exactly like radicalmindsacademy.org (same layout, fonts, colors, animations)

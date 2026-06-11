@@ -9,6 +9,7 @@ import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 export default function Contact() {
   const [submitted, setSubmitted] = useState(false);
@@ -62,8 +63,10 @@ export default function Contact() {
     );
   }
 
+  const scrollRef = useScrollAnimation();
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" ref={scrollRef}>
       <Navbar />
 
       {/* Hero */}
@@ -87,7 +90,7 @@ export default function Contact() {
 
       {/* Contact Content */}
       <section className="py-16">
-        <div className="container max-w-5xl">
+        <div className="container max-w-5xl animate-on-scroll">
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
             {/* Contact Info */}
             <div className="space-y-8">

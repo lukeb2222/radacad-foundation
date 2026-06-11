@@ -15,6 +15,13 @@
       "when": 1781130695241,
       "tag": "0001_friendly_peter_parker",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "5",
+      "when": 1781139509384,
+      "tag": "0002_perfect_captain_cross",
+      "breakpoints": true
     }
   ]
 }

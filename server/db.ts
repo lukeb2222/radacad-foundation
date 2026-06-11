@@ -1,4 +1,4 @@
-import { eq, desc, sum } from "drizzle-orm";
+import { eq, desc, sum, and, sql } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/mysql2";
 import {
   InsertUser,
@@ -13,13 +13,21 @@ import {
   InsertMessage,
   applicationNotes,
   InsertApplicationNote,
+  committeeReviews,
+  InsertCommitteeReview,
+  committeeMembers,
+  InsertCommitteeMember,
+  committeeFiles,
+  InsertCommitteeFile,
+  dashboardAccessTokens,
+  InsertDashboardAccessToken,
+  fundraisingConfig,
   siteSettings,
 } from "../drizzle/schema";
 import { ENV } from "./_core/env";
 
 let _db: ReturnType<typeof drizzle> | null = null;
 
-// Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
@@ -44,9 +52,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
   }
 
   try {
-    const values: InsertUser = {
-      openId: user.openId,
-    };
+    const values: InsertUser = { openId: user.openId };
     const updateSet: Record<string, unknown> = {};
 
     const textFields = ["name", "email", "loginMethod"] as const;
@@ -70,8 +76,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       values.role = user.role;
       updateSet.role = user.role;
     } else if (user.openId === ENV.ownerOpenId) {
-      values.role = 'admin';
-      updateSet.role = 'admin';
+      values.role = "admin";
+      updateSet.role = "admin";
     }
 
     if (!values.lastSignedIn) {
@@ -82,9 +88,7 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
-    });
+    await db.insert(users).values(values).onDuplicateKeyUpdate({ set: updateSet });
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
     throw error;
@@ -93,13 +97,8 @@ export async function upsertUser(user: InsertUser): Promise<void> {
 
 export async function getUserByOpenId(openId: string) {
   const db = await getDb();
-  if (!db) {
-    console.warn("[Database] Cannot get user: database not available");
-    return undefined;
-  }
-
+  if (!db) return undefined;
   const result = await db.select().from(users).where(eq(users.openId, openId)).limit(1);
-
   return result.length > 0 ? result[0] : undefined;
 }
 
@@ -134,7 +133,29 @@ export async function updateApplicationStatus(id: number, status: string) {
 export async function updateApplicationAiAnalysis(id: number, analysis: string) {
   const db = await getDb();
   if (!db) return;
-  await db.update(applications).set({ aiAnalysis: analysis }).where(eq(applications.id, id));
+  await db.update(applications).set({ aiAnalysis: analysis, aiAnalysisGeneratedAt: new Date() }).where(eq(applications.id, id));
+}
+
+export async function updateApplicationOverallScore(id: number, score: number | null, notes?: string) {
+  const db = await getDb();
+  if (!db) return;
+  const updateData: Record<string, unknown> = { overallScore: score };
+  if (notes !== undefined) updateData.committeeNotes = notes;
+  await db.update(applications).set(updateData as any).where(eq(applications.id, id));
+}
+
+export async function getApplicationStats() {
+  const db = await getDb();
+  if (!db) return { total: 0, pending: 0, under_review: 0, shortlisted: 0, approved: 0, denied: 0 };
+  const all = await db.select().from(applications);
+  return {
+    total: all.length,
+    pending: all.filter(a => a.status === "pending").length,
+    under_review: all.filter(a => a.status === "under_review").length,
+    shortlisted: all.filter(a => a.status === "shortlisted").length,
+    approved: all.filter(a => a.status === "approved").length,
+    denied: all.filter(a => a.status === "denied").length,
+  };
 }
 
 // ─── Referrals ───────────────────────────────────────────────────────────────
@@ -189,6 +210,29 @@ export async function getTotalDonations() {
   return Number(result[0]?.total || 0);
 }
 
+export async function markDonationThankYou(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(donations).set({ thankYouSent: true }).where(eq(donations.id, id));
+}
+
+export async function deleteDonation(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(donations).where(eq(donations.id, id));
+}
+
+export async function getDonationStats() {
+  const db = await getDb();
+  if (!db) return { total: 0, pendingThankYou: 0, thankYouSent: 0 };
+  const all = await db.select().from(donations).where(eq(donations.status, "completed"));
+  return {
+    total: all.length,
+    pendingThankYou: all.filter(d => !d.thankYouSent).length,
+    thankYouSent: all.filter(d => d.thankYouSent).length,
+  };
+}
+
 // ─── Messages ────────────────────────────────────────────────────────────────
 
 export async function createMessage(data: InsertMessage) {
@@ -210,6 +254,36 @@ export async function markMessageRead(id: number) {
   await db.update(messages).set({ isRead: true }).where(eq(messages.id, id));
 }
 
+export async function archiveMessage(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(messages).set({ isArchived: true }).where(eq(messages.id, id));
+}
+
+export async function unarchiveMessage(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(messages).set({ isArchived: false }).where(eq(messages.id, id));
+}
+
+export async function deleteMessage(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(messages).where(eq(messages.id, id));
+}
+
+export async function getMessageStats() {
+  const db = await getDb();
+  if (!db) return { total: 0, unread: 0, read: 0, archived: 0 };
+  const all = await db.select().from(messages);
+  return {
+    total: all.filter(m => !m.isArchived).length,
+    unread: all.filter(m => !m.isRead && !m.isArchived).length,
+    read: all.filter(m => m.isRead && !m.isArchived).length,
+    archived: all.filter(m => m.isArchived).length,
+  };
+}
+
 // ─── Application Notes ───────────────────────────────────────────────────────
 
 export async function createApplicationNote(data: InsertApplicationNote) {
@@ -222,6 +296,132 @@ export async function getNotesByApplicationId(applicationId: number) {
   const db = await getDb();
   if (!db) return [];
   return db.select().from(applicationNotes).where(eq(applicationNotes.applicationId, applicationId)).orderBy(desc(applicationNotes.createdAt));
+}
+
+// ─── Committee Reviews ───────────────────────────────────────────────────────
+
+export async function createCommitteeReview(data: InsertCommitteeReview) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(committeeReviews).values(data);
+}
+
+export async function getReviewsByApplicationId(applicationId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(committeeReviews).where(eq(committeeReviews.applicationId, applicationId)).orderBy(desc(committeeReviews.createdAt));
+}
+
+export async function deleteCommitteeReview(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(committeeReviews).where(eq(committeeReviews.id, id));
+}
+
+export async function getAverageScoreForApplication(applicationId: number) {
+  const db = await getDb();
+  if (!db) return null;
+  const reviews = await db.select().from(committeeReviews).where(eq(committeeReviews.applicationId, applicationId));
+  if (reviews.length === 0) return null;
+  const avg = reviews.reduce((sum, r) => sum + r.score, 0) / reviews.length;
+  return Math.round(avg);
+}
+
+// ─── Committee Members ───────────────────────────────────────────────────────
+
+export async function registerCommitteeMember(data: InsertCommitteeMember) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(committeeMembers).values(data).onDuplicateKeyUpdate({ set: { name: data.name, lastLogin: new Date() } });
+}
+
+export async function getCommitteeMembers() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(committeeMembers).orderBy(desc(committeeMembers.lastLogin));
+}
+
+// ─── Committee Files ─────────────────────────────────────────────────────────
+
+export async function createCommitteeFile(data: InsertCommitteeFile) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(committeeFiles).values(data);
+}
+
+export async function getFilesByApplicationId(applicationId: number) {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(committeeFiles).where(eq(committeeFiles.applicationId, applicationId)).orderBy(desc(committeeFiles.createdAt));
+}
+
+export async function deleteCommitteeFile(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.delete(committeeFiles).where(eq(committeeFiles.id, id));
+}
+
+// ─── Dashboard Access Tokens ─────────────────────────────────────────────────
+
+export async function createAccessToken(data: InsertDashboardAccessToken) {
+  const db = await getDb();
+  if (!db) throw new Error("Database not available");
+  await db.insert(dashboardAccessTokens).values(data);
+}
+
+export async function validateAccessToken(token: string) {
+  const db = await getDb();
+  if (!db) return false;
+  const result = await db.select().from(dashboardAccessTokens)
+    .where(and(eq(dashboardAccessTokens.token, token), eq(dashboardAccessTokens.isActive, true)))
+    .limit(1);
+  if (result.length > 0) {
+    await db.update(dashboardAccessTokens).set({ lastUsed: new Date() }).where(eq(dashboardAccessTokens.id, result[0].id));
+    return true;
+  }
+  return false;
+}
+
+export async function getAccessTokens() {
+  const db = await getDb();
+  if (!db) return [];
+  return db.select().from(dashboardAccessTokens).orderBy(desc(dashboardAccessTokens.createdAt));
+}
+
+export async function revokeAccessToken(id: number) {
+  const db = await getDb();
+  if (!db) return;
+  await db.update(dashboardAccessTokens).set({ isActive: false }).where(eq(dashboardAccessTokens.id, id));
+}
+
+// ─── Fundraising Config ──────────────────────────────────────────────────────
+
+export async function getFundraisingConfig() {
+  const db = await getDb();
+  if (!db) return null;
+  const result = await db.select().from(fundraisingConfig).where(eq(fundraisingConfig.isActive, true)).limit(1);
+  return result[0] || null;
+}
+
+export async function upsertFundraisingConfig(data: { goalAmount: string; currentAmount: string; campaignTitle: string; description?: string }) {
+  const db = await getDb();
+  if (!db) return;
+  const existing = await db.select().from(fundraisingConfig).where(eq(fundraisingConfig.isActive, true)).limit(1);
+  if (existing.length > 0) {
+    await db.update(fundraisingConfig).set({
+      goalAmount: data.goalAmount,
+      currentAmount: data.currentAmount,
+      campaignTitle: data.campaignTitle,
+      description: data.description || null,
+    }).where(eq(fundraisingConfig.id, existing[0].id));
+  } else {
+    await db.insert(fundraisingConfig).values({
+      goalAmount: data.goalAmount,
+      currentAmount: data.currentAmount,
+      campaignTitle: data.campaignTitle,
+      description: data.description || null,
+    });
+  }
 }
 
 // ─── Site Settings ───────────────────────────────────────────────────────────

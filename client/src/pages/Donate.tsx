@@ -4,11 +4,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent } from "@/components/ui/card";
-import { Heart, Users, TrendingUp, Calendar, CreditCard, Building } from "lucide-react";
+import { Heart, Users, Calendar, CreditCard, Building } from "lucide-react";
 import { trpc } from "@/lib/trpc";
 import { toast } from "sonner";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
+import { useScrollAnimation } from "@/hooks/useScrollAnimation";
 
 const DONATION_TIERS = [
   { amount: 50, label: "Supporter", description: "Help cover learning materials for a student" },
@@ -68,8 +69,10 @@ export default function Donate() {
     });
   };
 
+  const scrollRef = useScrollAnimation();
+
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col" ref={scrollRef}>
       <Navbar />
 
       {/* Hero */}
@@ -94,10 +97,10 @@ export default function Donate() {
 
       {/* Progress Section */}
       <section className="py-16">
-        <div className="container max-w-3xl">
+        <div className="container max-w-3xl animate-on-scroll">
           <div className="text-center mb-8">
             <p className="text-sm uppercase tracking-[0.2em] text-primary font-semibold mb-2">
-              <TrendingUp className="inline h-4 w-4 mr-1" /> Fundraising Progress
+              <Heart className="inline h-4 w-4 mr-1" /> Fundraising Progress
             </p>
             <h2 className="text-2xl font-bold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               Scholarship Fund
@@ -124,11 +127,10 @@ export default function Donate() {
           </div>
 
           {/* Stats row */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-10">
+          <div className="grid grid-cols-3 gap-6 mt-10">
             {[
               { icon: Heart, value: "100%", label: "Goes to the Scholar" },
               { icon: Users, value: "50+", label: "Lives Changed" },
-              { icon: TrendingUp, value: "$200K+", label: "Total Funded" },
               { icon: Calendar, value: "2024", label: "Founded" },
             ].map((stat, i) => (
               <div key={i} className="text-center">
@@ -142,7 +144,7 @@ export default function Donate() {
       </section>
 
       {/* Donation Form */}
-      <section className="section-light py-16">
+      <section className="section-light py-16 animate-on-scroll">
         <div className="container max-w-4xl">
           <div className="grid grid-cols-1 lg:grid-cols-5 gap-8">
             {/* Left: Tiers */}
