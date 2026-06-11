@@ -15,8 +15,8 @@ export default function Home() {
       <section className="relative">
         <div className="w-full h-[500px] md:h-[600px]">
           <img
-            src="/manus-storage/hero_banner_fbde526e.png"
-            alt="RadAcad students in Jackson Hole"
+            src="/manus-storage/teton_mountains_hero_5b3099a7.jpg"
+            alt="Grand Teton Mountains in Jackson Hole"
             className="w-full h-full object-cover"
           />
         </div>

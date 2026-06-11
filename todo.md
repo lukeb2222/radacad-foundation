@@ -44,4 +44,5 @@
 - [ ] Add auto-refresh every 60 seconds
 - [ ] Add applicant detail dialog with 5 tabs (Overview, Essays, Documents, Reviews, AI Analysis)
 - [ ] Theme dashboard to RadAcad teal/green branding (not warm/gold Max Martin colors)
-- [ ] Rebuild public pages to look exactly like radicalmindsacademy.org (same layout, fonts, colors, animations)
+- [x] Rebuild public pages to look exactly like radicalmindsacademy.org (same layout, fonts, colors, animations)
+- [x] Remove Employment Status field from the application form

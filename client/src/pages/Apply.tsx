@@ -31,7 +31,7 @@ export default function Apply() {
   const [country, setCountry] = useState("");
   const [programInterest, setProgramInterest] = useState("");
   const [currentEducation, setCurrentEducation] = useState("");
-  const [employmentStatus, setEmploymentStatus] = useState("");
+
   const [amountRequested, setAmountRequested] = useState("");
   const [financialStatement, setFinancialStatement] = useState("");
   const [essay, setEssay] = useState("");
@@ -133,7 +133,7 @@ export default function Apply() {
       country: country.trim() || undefined,
       programInterest,
       currentEducation: currentEducation || undefined,
-      employmentStatus: employmentStatus || undefined,
+
       amountRequested: amountRequested.trim(),
       financialStatement: financialStatement.trim() || undefined,
       essay: essay.trim(),
@@ -340,22 +340,7 @@ export default function Apply() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <div>
-                    <Label htmlFor="employment">Parent/Guardian Employment Status</Label>
-                    <Select value={employmentStatus} onValueChange={setEmploymentStatus}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select employment status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="Employed Full-Time">Employed Full-Time</SelectItem>
-                        <SelectItem value="Employed Part-Time">Employed Part-Time</SelectItem>
-                        <SelectItem value="Self-Employed">Self-Employed</SelectItem>
-                        <SelectItem value="Unemployed">Unemployed</SelectItem>
-                        <SelectItem value="Retired">Retired</SelectItem>
-                        <SelectItem value="Other">Other</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+
                 </div>
               )}
 
