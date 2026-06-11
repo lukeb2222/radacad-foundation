@@ -60,7 +60,7 @@ export default function Footer() {
             &copy; {new Date().getFullYear()} RadAcad Foundation. All rights reserved.
           </p>
           <p className="text-xs text-gray-400">
-            This website was made by <a href="https://webadi.com" target="_blank" rel="noopener noreferrer" className="text-[var(--radacad-teal)] hover:underline no-underline">Luke Balyasny</a>
+            This website was made by <span className="text-[var(--radacad-teal)]">Luke Balyasny</span>
           </p>
         </div>
       </div>
