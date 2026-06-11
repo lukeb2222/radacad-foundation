@@ -16,6 +16,7 @@ export default function DonateSuccess() {
           <h1 className="text-3xl font-bold text-foreground mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             Thank You <Heart className="inline h-6 w-6 text-primary" />
           </h1>
+          <h2 className="text-lg font-semibold text-foreground mb-3">Your Impact Matters</h2>
           <p className="text-muted-foreground leading-relaxed mb-6">
             Your donation has been received. Your generosity directly supports students
             in Jackson who need access to flexible, personalized education at Radical Minds Academy.
