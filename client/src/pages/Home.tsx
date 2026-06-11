@@ -9,11 +9,15 @@ export default function Home() {
     <div className="min-h-screen flex flex-col">
       <Navbar />
 
-      {/* Hero Section */}
-      <section className="hero-gradient pt-32 pb-24 md:pt-40 md:pb-32 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-20 left-10 w-72 h-72 bg-teal-400/30 blur-3xl" />
-          <div className="absolute bottom-10 right-20 w-96 h-96 bg-purple-400/20 blur-3xl" />
+      {/* Hero Section with Background Image */}
+      <section className="relative pt-32 pb-24 md:pt-40 md:pb-32 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="/manus-storage/hero_banner_fbde526e.png"
+            alt="RadAcad students learning"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#1a2332]/85 via-[#1a2332]/75 to-[#1a2332]/90" />
         </div>
         <div className="container relative z-10 text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-white/70 mb-4 font-medium">
@@ -25,7 +29,7 @@ export default function Home() {
           >
             RadAcad <span className="italic text-teal-300">Foundation</span>
           </h1>
-          <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto mb-10 leading-relaxed">
+          <p className="text-lg md:text-xl text-white/90 max-w-2xl mx-auto mb-10 leading-relaxed">
             Providing scholarships to families who cannot afford Radical Minds Academy programs.
             Every student deserves access to flexible, personalized education.
           </p>
@@ -46,20 +50,34 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Mission Section */}
+      {/* Mission Section with Image */}
       <section className="py-20 md:py-28">
         <div className="container">
-          <div className="max-w-3xl mx-auto text-center">
-            <p className="text-sm uppercase tracking-[0.2em] text-primary font-semibold mb-3">Our Mission</p>
-            <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
-              Education Should Not Be a <span className="italic text-primary">Privilege</span>
-            </h2>
-            <p className="text-lg text-muted-foreground leading-relaxed">
-              The RadAcad Foundation exists to ensure that financial circumstances never prevent
-              students from accessing Radical Minds Academy's flexible, personalized education programs.
-              We serve middle and high school students in Jackson, Alpine, Victor, and Driggs who
-              need something more flexible, more personal, and more forward-thinking than traditional school.
-            </p>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <p className="text-sm uppercase tracking-[0.2em] text-primary font-semibold mb-3">Our Mission</p>
+              <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-6" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                Education Should Not Be a <span className="italic text-primary">Privilege</span>
+              </h2>
+              <p className="text-lg text-muted-foreground leading-relaxed mb-6">
+                The RadAcad Foundation exists to ensure that financial circumstances never prevent
+                students from accessing Radical Minds Academy's flexible, personalized education programs.
+                We serve middle and high school students in Jackson, Alpine, Victor, and Driggs who
+                need something more flexible, more personal, and more forward-thinking than traditional school.
+              </p>
+              <p className="text-muted-foreground leading-relaxed">
+                100% of donations go directly to student scholarships covering tuition, materials, and
+                one-on-one coaching sessions.
+              </p>
+            </div>
+            <div className="relative">
+              <img
+                src="/manus-storage/students_learning_8ffdc173.jpg"
+                alt="RadAcad students in a learning session"
+                className="w-full h-80 object-cover shadow-lg"
+                style={{ borderRadius: "var(--radius)" }}
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -86,7 +104,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Programs Covered */}
+      {/* Programs Covered with Images */}
       <section className="py-20 md:py-28">
         <div className="container">
           <div className="text-center mb-14">
@@ -101,17 +119,43 @@ export default function Home() {
                 icon: BookOpen,
                 title: "Daytime RadAcad Classes",
                 description: "Full-day personalized learning with academic coaching, online school support, small-group classes, and one-on-one instruction.",
+                image: "/manus-storage/students_group_c3c058bc.jpg",
               },
               {
                 icon: Clock,
                 title: "After School Clubs",
                 description: "Seasonal enrichment clubs (Fall, Winter, Spring) focused on flexible, personalized learning to help students grow at their own pace.",
+                image: "/manus-storage/students_activity_2a3e9e07.jpg",
               },
               {
                 icon: Sun,
                 title: "Summer Camps",
                 description: "Immersive summer programs combining outdoor adventure with academic enrichment in the Jackson Hole community.",
+                image: "/manus-storage/summer_camp_9578e76c.jpg",
               },
+            ].map((program, i) => (
+              <div
+                key={i}
+                className="overflow-hidden bg-white border border-border hover:shadow-lg transition-shadow duration-300"
+                style={{ borderRadius: "var(--radius)" }}
+              >
+                <img
+                  src={program.image}
+                  alt={program.title}
+                  className="w-full h-48 object-cover"
+                />
+                <div className="p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <program.icon className="h-5 w-5 text-primary" />
+                    <h3 className="text-lg font-bold text-foreground">{program.title}</h3>
+                  </div>
+                  <p className="text-muted-foreground text-sm leading-relaxed">{program.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+            {[
               {
                 icon: UserCheck,
                 title: "One-on-One Tutoring",
@@ -142,8 +186,49 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Why RadAcad Section */}
+      {/* Activities Gallery */}
       <section className="section-light py-20">
+        <div className="container">
+          <div className="text-center mb-12">
+            <p className="text-sm uppercase tracking-[0.2em] text-primary font-semibold mb-3">Beyond the Classroom</p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+              Daily Group <span className="italic text-primary">Activities</span>
+            </h2>
+            <p className="text-muted-foreground mt-4 max-w-2xl mx-auto">
+              At RadAcad, education goes beyond the classroom. We foster connection, adventure, and friendships that last a lifetime.
+            </p>
+          </div>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            <div className="relative group overflow-hidden" style={{ borderRadius: "var(--radius)" }}>
+              <img src="/manus-storage/rock_climbing_15c08c2f.jpg" alt="Rock Climbing" className="w-full h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                <span className="text-white text-sm font-semibold">Rock Climbing</span>
+              </div>
+            </div>
+            <div className="relative group overflow-hidden" style={{ borderRadius: "var(--radius)" }}>
+              <img src="/manus-storage/backcountry_skiing_58090314.jpg" alt="Backcountry Skiing" className="w-full h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                <span className="text-white text-sm font-semibold">Backcountry Skiing</span>
+              </div>
+            </div>
+            <div className="relative group overflow-hidden" style={{ borderRadius: "var(--radius)" }}>
+              <img src="/manus-storage/friday_field_trips_e3171c43.jpg" alt="Friday Field Trips" className="w-full h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                <span className="text-white text-sm font-semibold">Friday Field Trips</span>
+              </div>
+            </div>
+            <div className="relative group overflow-hidden" style={{ borderRadius: "var(--radius)" }}>
+              <img src="/manus-storage/students_activity_2a3e9e07.jpg" alt="Group Activities" className="w-full h-48 md:h-56 object-cover group-hover:scale-105 transition-transform duration-500" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent flex items-end p-4">
+                <span className="text-white text-sm font-semibold">Group Activities</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Why RadAcad Section */}
+      <section className="py-20">
         <div className="container">
           <div className="text-center mb-12">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
@@ -168,9 +253,17 @@ export default function Home() {
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="hero-gradient py-20">
-        <div className="container text-center">
+      {/* CTA Section with Background Image */}
+      <section className="relative py-24 overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src="/manus-storage/students_group_c3c058bc.jpg"
+            alt="RadAcad community"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-[#1a2332]/85" />
+        </div>
+        <div className="container relative z-10 text-center">
           <h2 className="text-3xl md:text-4xl font-bold text-white mb-4" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
             Ready to <span className="italic text-teal-300">School Differently?</span>
           </h2>

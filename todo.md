@@ -28,3 +28,4 @@
 - [x] Refine Donate page with tiered giving and Stripe checkout
 - [x] Refine Apply page with multi-step form and actual RadAcad programs
 - [x] Ensure admin dashboard properly reviews applications and shows donations
+- [x] Include images from the current Radical Minds Academy website throughout the Foundation site

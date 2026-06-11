@@ -67,8 +67,12 @@ export default function Contact() {
       <Navbar />
 
       {/* Hero */}
-      <section className="hero-gradient pt-32 pb-16 md:pt-36 md:pb-20">
-        <div className="container text-center">
+      <section className="relative pt-32 pb-16 md:pt-36 md:pb-20 overflow-hidden">
+        <div className="absolute inset-0">
+          <img src="/manus-storage/backcountry_skiing_58090314.jpg" alt="RadAcad outdoor activities" className="w-full h-full object-cover" />
+          <div className="absolute inset-0 bg-[#1a2332]/80" />
+        </div>
+        <div className="container relative z-10 text-center">
           <p className="text-sm uppercase tracking-[0.3em] text-white/70 mb-3 font-medium">
             Get In Touch
           </p>
