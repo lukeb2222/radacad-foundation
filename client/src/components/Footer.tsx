@@ -8,9 +8,9 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <img
-              src="/manus-storage/radacad_logo_b7e2f890.png"
+              src="/manus-storage/radacad_foundation_logo_d430f3e8.png"
               alt="RadAcad Foundation"
-              className="h-8 mb-4 brightness-0 invert"
+              className="h-12 mb-4 brightness-0 invert"
             />
             <p className="text-sm text-white/70 leading-relaxed">
               The RadAcad Foundation provides scholarships to families who cannot afford

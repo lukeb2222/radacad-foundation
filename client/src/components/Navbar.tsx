@@ -16,15 +16,12 @@ export default function Navbar() {
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border">
       <div className="container flex items-center justify-between h-16">
-        <Link href="/" className="flex items-center gap-3 no-underline">
+        <Link href="/" className="flex items-center no-underline">
           <img
-            src="/manus-storage/radacad_logo_b7e2f890.png"
-            alt="RadAcad"
-            className="h-9"
+            src="/manus-storage/radacad_foundation_logo_d430f3e8.png"
+            alt="RadAcad Foundation"
+            className="h-12"
           />
-          <span className="text-sm font-semibold tracking-wide text-primary">
-            Foundation
-          </span>
         </Link>
 
         {/* Desktop nav */}
