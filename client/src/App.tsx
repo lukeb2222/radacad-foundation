@@ -42,6 +42,17 @@ function App() {
         <TooltipProvider>
           <Toaster />
           <Router />
+          {/* Floating button to access main RadAcad website */}
+          <a
+            href="https://www.radicalmindsacademy.org"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-[var(--radacad-teal)] text-white px-4 py-3 shadow-lg hover:bg-[var(--radacad-teal-dark)] transition-all duration-200 hover:scale-105 active:scale-95 text-sm font-medium"
+            style={{ borderRadius: '4px' }}
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Visit RadAcad
+          </a>
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
