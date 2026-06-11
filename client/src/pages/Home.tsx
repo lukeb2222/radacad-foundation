@@ -3,9 +3,14 @@ import { Heart, GraduationCap, Users, ArrowRight, BookOpen, Sun, Clock, Star, Ch
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
+import { useEffect } from "react";
 
 export default function Home() {
   const scrollRef = useScrollAnimation();
+
+  useEffect(() => {
+    document.title = "RadAcad Foundation | Scholarships for Jackson Hole Students";
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col" ref={scrollRef}>
