@@ -142,6 +142,7 @@ export default function Apply() {
   };
 
   const totalSteps = 5;
+  const scrollRef = useScrollAnimation();
 
   if (submitted) {
     return (
@@ -165,8 +166,6 @@ export default function Apply() {
       </div>
     );
   }
-
-  const scrollRef = useScrollAnimation();
 
   return (
     <div className="min-h-screen flex flex-col" ref={scrollRef}>
