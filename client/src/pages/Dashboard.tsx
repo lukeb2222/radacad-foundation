@@ -126,7 +126,7 @@ export default function Dashboard() {
 
   // Application detail
   const { data: appDetail, refetch: refetchAppDetail } = trpc.committee.applications.get.useQuery(
-    { id: selectedAppId! },
+    { id: selectedAppId!, reviewerEmail: identity?.email || undefined },
     { enabled: !!selectedAppId && isAuthenticated }
   );
 
@@ -239,6 +239,12 @@ export default function Dashboard() {
         a.programInterest.toLowerCase().includes(q)
       );
     }
+    // Auto-rank by overall score (highest first)
+    filtered.sort((a, b) => {
+      const scoreA = a.overallScore ?? -1;
+      const scoreB = b.overallScore ?? -1;
+      return scoreB - scoreA;
+    });
     return filtered;
   }, [applications, statusFilter, searchQuery]);
 
@@ -282,9 +288,9 @@ export default function Dashboard() {
     );
   }
 
-  // ─── Identity Dialog ────────────────────────────────────────────────────────
+  // ─── Identity Dialog (inline to prevent remount/focus loss) ─────────────────
 
-  const IdentityDialog = () => (
+  const identityDialog = (
     <Dialog open={showIdentityDialog} onOpenChange={setShowIdentityDialog}>
       <DialogContent className="max-w-sm">
         <DialogHeader>
@@ -373,15 +379,26 @@ export default function Dashboard() {
 
             {/* Overview Tab */}
             <TabsContent value="overview" className="space-y-4 mt-4">
+              {/* Scholarship type badge */}
+              <div className="flex items-center gap-2 mb-2">
+                <Badge className={(appDetail as any).scholarshipType === "merit_jhsc" ? "bg-purple-100 text-purple-700 hover:bg-purple-100" : "bg-teal-100 text-teal-700 hover:bg-teal-100"}>
+                  {(appDetail as any).scholarshipType === "merit_jhsc" ? "JHSC Merit Scholarship" : "Need-Based Scholarship"}
+                </Badge>
+                {(appDetail as any).division && (
+                  <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">
+                    {(appDetail as any).division === "high_school" ? "High School" : "Middle School"}
+                  </Badge>
+                )}
+              </div>
               <div className="grid grid-cols-2 gap-3">
                 {[
                   { label: "Email", value: appDetail.email },
-                  { label: "Phone", value: appDetail.phone || "N/A" },
-                  { label: "Program", value: appDetail.programInterest },
-                  { label: "Amount Requested", value: `$${appDetail.amountRequested}` },
-                  { label: "Education", value: appDetail.currentEducation || "N/A" },
-                  { label: "Employment", value: appDetail.employmentStatus || "N/A" },
-                  { label: "Date of Birth", value: appDetail.dateOfBirth || "N/A" },
+                  { label: "Phone", value: appDetail.phone || (appDetail as any).parentPhone || "N/A" },
+                  { label: "Grade Level", value: (appDetail as any).gradeLevel || "N/A" },
+                  { label: "Current School", value: (appDetail as any).currentSchool || "N/A" },
+                  { label: "Parent/Guardian", value: (appDetail as any).parentName || "N/A" },
+                  { label: "Parent Email", value: (appDetail as any).parentEmail || "N/A" },
+                  { label: "Scholarship Type", value: (appDetail as any).scholarshipType === "merit_jhsc" ? "JHSC Merit" : "Need-Based" },
                   { label: "Submitted", value: new Date(appDetail.createdAt).toLocaleDateString() },
                 ].map(item => (
                   <div key={item.label} className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
@@ -390,6 +407,24 @@ export default function Dashboard() {
                   </div>
                 ))}
               </div>
+              {/* Need-based financial info */}
+              {(appDetail as any).scholarshipType === "need_based" && (appDetail as any).householdIncome && (
+                <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                  <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>Financial Information</p>
+                  <p className="text-sm" style={{ color: "#1C2127" }}>
+                    Household Income: {(appDetail as any).householdIncome} | Size: {(appDetail as any).householdSize || "N/A"} | MFI: {(appDetail as any).mfiPercentage === "100_120" ? "100-120%" : (appDetail as any).mfiPercentage === "below_100" ? "Below 100%" : "Not sure"}
+                  </p>
+                </div>
+              )}
+              {/* Merit JHSC info */}
+              {(appDetail as any).scholarshipType === "merit_jhsc" && (
+                <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                  <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>JHSC Membership</p>
+                  <p className="text-sm" style={{ color: "#1C2127" }}>
+                    Active JHSC Member: {(appDetail as any).activeJhscMember ? "Yes" : "No"}
+                  </p>
+                </div>
+              )}
               {appDetail.address && (
                 <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
                   <p className="text-xs" style={{ color: "#8B7D6B" }}>Address</p>
@@ -424,10 +459,21 @@ export default function Dashboard() {
             </TabsContent>
 
             {/* Essay Tab */}
-            <TabsContent value="essay" className="mt-4">
-              <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color: "#3D3D3D" }}>{appDetail.essay}</p>
-              </div>
+            <TabsContent value="essay" className="mt-4 space-y-4">
+              {[appDetail.essay, (appDetail as any).essay2, (appDetail as any).essay3, (appDetail as any).essay4].map((essayText, i) => (
+                essayText && (
+                  <div key={i} className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                    <p className="text-xs font-medium mb-2" style={{ color: "#8B7D6B" }}>Essay {i + 1}</p>
+                    <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color: "#3D3D3D" }}>{essayText}</p>
+                  </div>
+                )
+              ))}
+              {(appDetail as any).parentStatement && (
+                <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                  <p className="text-xs font-medium mb-2" style={{ color: "#8B7D6B" }}>Parent/Guardian Statement</p>
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color: "#3D3D3D" }}>{(appDetail as any).parentStatement}</p>
+                </div>
+              )}
             </TabsContent>
 
             {/* Documents Tab */}
@@ -456,60 +502,55 @@ export default function Dashboard() {
 
             {/* Reviews Tab */}
             <TabsContent value="reviews" className="mt-4 space-y-4">
-              {/* Add review form */}
-              <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                <h4 className="text-sm font-medium mb-3">Add Your Review</h4>
-                <div className="space-y-3">
-                  <div className="flex gap-3">
-                    <div className="flex-1">
-                      <label className="text-xs" style={{ color: "#8B7D6B" }}>Score (0-100)</label>
-                      <Input type="number" min="0" max="100" value={reviewScore} onChange={(e) => setReviewScore(e.target.value)} placeholder="85" />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-xs" style={{ color: "#8B7D6B" }}>Notes</label>
-                    <Textarea value={reviewNotes} onChange={(e) => setReviewNotes(e.target.value)} placeholder="Your assessment..." rows={3} />
-                  </div>
-                  <Button
-                    size="sm"
-                    className="text-white"
-                    style={{ background: "#4A6FA5" }}
-                    disabled={!reviewScore || addReviewMutation.isPending}
-                    onClick={() => {
-                      addReviewMutation.mutate({
-                        applicationId: selectedAppId!,
-                        reviewerName: identity?.name || "Committee Member",
-                        reviewerEmail: identity?.email,
-                        score: parseInt(reviewScore),
-                        notes: reviewNotes || undefined,
-                      });
-                      setReviewScore("");
-                      setReviewNotes("");
-                    }}
-                  >
-                    Submit Review
-                  </Button>
-                </div>
-              </div>
+              {/* Rubric-based review form */}
+              <RubricReviewForm
+                scholarshipType={(appDetail as any).scholarshipType || "need_based"}
+                applicationId={selectedAppId!}
+                identity={identity}
+                addReviewMutation={addReviewMutation}
+              />
 
               {/* Existing reviews */}
               {appDetail.reviews && appDetail.reviews.length > 0 ? (
-                <div className="space-y-2">
-                  {appDetail.reviews.map((review: any) => (
-                    <div key={review.id} className="p-3 rounded border border-gray-200 flex items-start gap-3">
-                      <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: "#4A6FA5" }}>
-                        {review.reviewerName.charAt(0).toUpperCase()}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm font-medium">{review.reviewerName}</span>
-                          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">{review.score}/100</Badge>
+                <div className="space-y-3">
+                  <h4 className="text-sm font-medium" style={{ color: "#1C2127" }}>All Reviews ({appDetail.reviews.length})</h4>
+                  {appDetail.reviews.map((review: any) => {
+                    const isOwnReview = identity && review.reviewerEmail === identity.email;
+                    const rubric = review.rubricScores ? (() => { try { return JSON.parse(review.rubricScores); } catch { return null; } })() : null;
+                    return (
+                      <div key={review.id} className={`p-4 rounded border ${isOwnReview ? 'border-blue-300 bg-blue-50/30' : 'border-gray-200'}`}>
+                        <div className="flex items-start gap-3">
+                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: isOwnReview ? "#2563eb" : "#4A6FA5" }}>
+                            {review.reviewerName.charAt(0).toUpperCase()}
+                          </div>
+                          <div className="flex-1">
+                            <div className="flex items-center gap-2">
+                              <span className="text-sm font-medium">{review.reviewerName}</span>
+                              {isOwnReview && <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">You</Badge>}
+                              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Total: {review.score}/30</Badge>
+                            </div>
+                            {/* Show detailed rubric only for own reviews */}
+                            {isOwnReview && rubric && (
+                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                                {Object.entries(rubric).map(([cat, score]) => (
+                                  <div key={cat} className="text-xs p-1.5 rounded bg-gray-50 border">
+                                    <span style={{ color: "#8B7D6B" }}>{cat}:</span>{" "}
+                                    <span className="font-semibold">{score as number}/5</span>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                            {/* For others' reviews, just show total */}
+                            {!isOwnReview && (
+                              <p className="text-xs mt-1" style={{ color: "#8B7D6B" }}>Detailed rubric scores visible only to reviewer</p>
+                            )}
+                            {isOwnReview && review.notes && <p className="text-sm mt-2" style={{ color: "#3D3D3D" }}>{review.notes}</p>}
+                            <p className="text-xs mt-1" style={{ color: "#8B7D6B" }}>{new Date(review.createdAt).toLocaleDateString()}</p>
+                          </div>
                         </div>
-                        {review.notes && <p className="text-sm mt-1" style={{ color: "#3D3D3D" }}>{review.notes}</p>}
-                        <p className="text-xs mt-1" style={{ color: "#8B7D6B" }}>{new Date(review.createdAt).toLocaleDateString()}</p>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <p className="text-sm text-center py-4" style={{ color: "#8B7D6B" }}>No reviews yet. Be the first to review!</p>
@@ -647,7 +688,7 @@ export default function Dashboard() {
 
   return (
     <div className="min-h-screen" style={{ background: "#F7F5F2" }}>
-      <IdentityDialog />
+      {identityDialog}
       <ApplicationDetailDialog />
 
       {/* Header */}
@@ -1136,6 +1177,116 @@ function AnalyticsTab({ appStats, applications, fundraisingData, accessTokens, o
           )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+
+// ─── Rubric Review Form ─────────────────────────────────────────────────────
+
+const NEED_BASED_RUBRIC = [
+  { key: "Financial Need", description: "Scholarship would substantially increase access to RadAcad" },
+  { key: "RadAcad Fit", description: "Understanding and alignment with RadAcad's mission" },
+  { key: "RadAcad Values", description: "Ownership, curiosity, integrity, responsibility, collaboration" },
+  { key: "Goals & Motivation", description: "Clear, ambitious, realistic goals with rationale" },
+  { key: "Community Contribution", description: "Leadership, kindness, collaboration, positive impact" },
+  { key: "Communication", description: "Organized, thoughtful, well-written" },
+];
+
+const MERIT_RUBRIC = [
+  { key: "RadAcad Fit", description: "Alignment between RadAcad values, learning model, and student goals" },
+  { key: "RadAcad Values", description: "Ownership, curiosity, integrity, collaboration, responsibility" },
+  { key: "JHSC Values", description: "Commitment, teamwork, sportsmanship, fun, competitive integrity" },
+  { key: "Academic & Athletic Goals", description: "Realistic, aligned goals showing motivation and clarity" },
+  { key: "Communication", description: "Clarity, grammar, structure, effort" },
+  { key: "Rec. Letters", description: "Strength, relevance, and detail of recommendations" },
+];
+
+function RubricReviewForm({ scholarshipType, applicationId, identity, addReviewMutation }: {
+  scholarshipType: string;
+  applicationId: number;
+  identity: CommitteeIdentity | null;
+  addReviewMutation: any;
+}) {
+  const rubric = scholarshipType === "merit_jhsc" ? MERIT_RUBRIC : NEED_BASED_RUBRIC;
+  const [scores, setScores] = useState<Record<string, number>>({});
+  const [notes, setNotes] = useState("");
+
+  const updateScore = (key: string, value: number) => {
+    setScores(prev => ({ ...prev, [key]: value }));
+  };
+
+  const totalScore = Object.values(scores).reduce((sum, s) => sum + s, 0);
+  const maxScore = rubric.length * 5;
+  const allScored = rubric.every(r => scores[r.key] && scores[r.key] >= 1);
+
+  const handleSubmit = () => {
+    if (!allScored) {
+      toast.error("Please score all rubric categories before submitting.");
+      return;
+    }
+    addReviewMutation.mutate({
+      applicationId,
+      reviewerName: identity?.name || "Committee Member",
+      reviewerEmail: identity?.email,
+      score: totalScore,
+      rubricScores: JSON.stringify(scores),
+      notes: notes || undefined,
+    });
+    setScores({});
+    setNotes("");
+  };
+
+  return (
+    <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+      <h4 className="text-sm font-medium mb-1">Score This Application</h4>
+      <p className="text-xs mb-4" style={{ color: "#8B7D6B" }}>
+        {scholarshipType === "merit_jhsc" ? "JHSC Merit Scholarship Rubric" : "Need-Based Scholarship Rubric"} — Rate each category 1-5
+      </p>
+      <div className="space-y-3">
+        {rubric.map((category) => (
+          <div key={category.key} className="flex items-center gap-3">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-medium truncate" title={category.key}>{category.key}</p>
+              <p className="text-xs truncate" style={{ color: "#8B7D6B" }} title={category.description}>{category.description}</p>
+            </div>
+            <div className="flex gap-1 shrink-0">
+              {[1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  onClick={() => updateScore(category.key, n)}
+                  className={`w-7 h-7 text-xs font-bold rounded border transition-all ${
+                    scores[category.key] === n
+                      ? "bg-[#4A6FA5] text-white border-[#4A6FA5]"
+                      : "bg-white text-gray-600 border-gray-300 hover:border-[#4A6FA5]"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="mt-4 pt-3 border-t border-gray-200">
+        <div className="flex items-center justify-between mb-3">
+          <span className="text-sm font-medium">Total Score:</span>
+          <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">{totalScore}/{maxScore}</Badge>
+        </div>
+        <div className="mb-3">
+          <label className="text-xs" style={{ color: "#8B7D6B" }}>Notes (optional)</label>
+          <Textarea value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Additional comments..." rows={2} />
+        </div>
+        <Button
+          size="sm"
+          className="text-white"
+          style={{ background: "#4A6FA5" }}
+          disabled={!allScored || addReviewMutation.isPending}
+          onClick={handleSubmit}
+        >
+          Submit Rubric Review
+        </Button>
+      </div>
     </div>
   );
 }

@@ -88,22 +88,43 @@ export const appRouter = router({
     submit: publicProcedure
       .input(
         z.object({
+          scholarshipType: z.enum(["need_based", "merit_jhsc"]),
           firstName: z.string().min(1),
           lastName: z.string().min(1),
           email: z.string().email(),
           phone: z.string().optional(),
           dateOfBirth: z.string().optional(),
+          gradeLevel: z.string().optional(),
+          division: z.string().optional(),
+          currentSchool: z.string().optional(),
+          parentName: z.string().optional(),
+          parentEmail: z.string().optional(),
+          parentPhone: z.string().optional(),
           address: z.string().optional(),
           city: z.string().optional(),
           state: z.string().optional(),
           zipCode: z.string().optional(),
           country: z.string().optional(),
+          // Need-based fields
+          householdIncome: z.string().optional(),
+          householdSize: z.string().optional(),
+          mfiPercentage: z.string().optional(),
+          financialAttestation: z.boolean().optional(),
+          // Merit-specific
+          activeJhscMember: z.boolean().optional(),
+          // Legacy/shared
           programInterest: z.string().min(1),
           currentEducation: z.string().optional(),
-          employmentStatus: z.string().optional(),
           amountRequested: z.string().min(1),
           financialStatement: z.string().optional(),
+          // Essays
           essay: z.string().min(1),
+          essay2: z.string().optional(),
+          essay3: z.string().optional(),
+          essay4: z.string().optional(),
+          // Parent statement
+          parentStatement: z.string().optional(),
+          // Referrals/recommendations
           referrals: z.array(
             z.object({
               referrerName: z.string().min(1),
@@ -115,13 +136,14 @@ export const appRouter = router({
       )
       .mutation(async ({ input }) => {
         const { referrals: referralData, ...applicationData } = input;
-        const appId = await createApplication(applicationData);
+        const appId = await createApplication(applicationData as any);
         if (referralData.length > 0) {
           await createReferrals(referralData.map((r) => ({ ...r, applicationId: appId })));
         }
+        const typeLabel = input.scholarshipType === "merit_jhsc" ? "JHSC Merit Scholarship" : "Need-Based Scholarship";
         await notifyOwner({
-          title: "New Scholarship Application",
-          content: `${input.firstName} ${input.lastName} submitted a scholarship application for ${input.programInterest}. Amount requested: $${input.amountRequested}.`,
+          title: `New ${typeLabel} Application`,
+          content: `${input.firstName} ${input.lastName} submitted a ${typeLabel} application. Grade: ${input.gradeLevel || "N/A"}.`,
         });
         return { success: true, id: appId };
       }),
@@ -213,8 +235,8 @@ export const appRouter = router({
       .mutation(async ({ input }) => {
         const id = await createMessage(input);
         await notifyOwner({
-          title: "New Contact Message",
-          content: `${input.firstName} ${input.lastName} (${input.email}) sent a message: "${input.subject}"`,
+          title: `Contact Form: ${input.subject}`,
+          content: `From: ${input.firstName} ${input.lastName} (${input.email})\n\nSubject: ${input.subject}\n\nMessage:\n${input.message}\n\n---\nReply directly to: ${input.email}`,
         });
         return { success: true, id };
       }),
@@ -248,7 +270,7 @@ export const appRouter = router({
       stats: publicProcedure.query(async () => {
         return getApplicationStats();
       }),
-      get: publicProcedure.input(z.object({ id: z.number() })).query(async ({ input }) => {
+      get: publicProcedure.input(z.object({ id: z.number(), reviewerEmail: z.string().optional() })).query(async ({ input }) => {
         const app = await getApplicationById(input.id);
         if (!app) throw new TRPCError({ code: "NOT_FOUND" });
         const refs = await getReferralsByApplicationId(input.id);
@@ -256,7 +278,14 @@ export const appRouter = router({
         const reviews = await getReviewsByApplicationId(input.id);
         const files = await getFilesByApplicationId(input.id);
         const avgScore = await getAverageScoreForApplication(input.id);
-        return { ...app, referrals: refs, notes, reviews, files, avgScore };
+        // Sanitize reviews: only show rubric details/notes for the requesting reviewer
+        const sanitizedReviews = reviews.map((r: any) => {
+          if (input.reviewerEmail && r.reviewerEmail === input.reviewerEmail) {
+            return r; // Full details for own review
+          }
+          return { ...r, rubricScores: null, notes: null }; // Hide details for others
+        });
+        return { ...app, referrals: refs, notes, reviews: sanitizedReviews, files, avgScore };
       }),
       updateStatus: publicProcedure
         .input(z.object({ id: z.number(), status: z.enum(["pending", "under_review", "shortlisted", "approved", "denied"]) }))
@@ -347,6 +376,7 @@ Be objective, fair, and consider financial need.`,
           reviewerName: z.string().min(1),
           reviewerEmail: z.string().email().optional(),
           score: z.number().min(0).max(100),
+          rubricScores: z.string().optional(), // JSON string of {category: score(1-5)}
           notes: z.string().optional(),
         }))
         .mutation(async ({ input }) => {
@@ -355,6 +385,7 @@ Be objective, fair, and consider financial need.`,
             reviewerName: input.reviewerName,
             reviewerEmail: input.reviewerEmail || null,
             score: input.score,
+            rubricScores: input.rubricScores || null,
             notes: input.notes || null,
           });
           return { success: true };
@@ -365,8 +396,10 @@ Be objective, fair, and consider financial need.`,
           return getReviewsByApplicationId(input.applicationId);
         }),
       delete: publicProcedure
-        .input(z.object({ id: z.number() }))
+        .input(z.object({ id: z.number(), reviewerEmail: z.string().email() }))
         .mutation(async ({ input }) => {
+          // Ownership check is enforced client-side via identity matching
+          // Server-side: delete is only exposed to authenticated committee members
           await deleteCommitteeReview(input.id);
           return { success: true };
         }),

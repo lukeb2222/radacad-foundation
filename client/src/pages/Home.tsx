@@ -1,5 +1,5 @@
 import { Link } from "wouter";
-import { Heart, GraduationCap, Users, ArrowRight, BookOpen, Sun, Clock, Star, CheckCircle } from "lucide-react";
+import { Heart, GraduationCap, Users, ArrowRight, Star, CheckCircle } from "lucide-react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import { useScrollAnimation } from "@/hooks/useScrollAnimation";
@@ -36,10 +36,12 @@ export default function Home() {
           >
             Scholarships for <span className="italic text-[var(--radacad-teal)]">Flexible Education</span> in Jackson
           </h1>
-          <p className="text-lg text-gray-600 leading-relaxed mb-8">
-            The RadAcad Foundation provides scholarships to families who cannot afford Radical Minds Academy programs.
+          <p className="text-lg text-gray-700 leading-relaxed mb-4 font-medium">
+            RadAcad Foundation provides need-based and merit-based scholarships to students and families attending Radical Minds Academy.
+          </p>
+          <p className="text-base text-gray-600 leading-relaxed mb-8">
             We believe every middle and high school student in Jackson, Alpine, Victor, and Driggs deserves access to
-            personalized, flexible education — regardless of financial circumstances.
+            personalized, flexible education — regardless of financial circumstances. Scholarships apply to RadAcad daytime classes only (not summer camps, after-school clubs, or monthly memberships).
           </p>
           <Link href="/apply">
             <button className="bg-[var(--radacad-teal)] text-white px-8 py-3 text-sm font-semibold hover:bg-[#249e8b] transition-colors inline-flex items-center gap-2">
@@ -115,62 +117,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Programs Section - 3 cards with photos like RadAcad's "Classes and Clubs" */}
-      <section className="py-20 md:py-28 bg-gray-50">
-        <div className="container">
-          <div className="text-center mb-14 animate-on-scroll">
-            <h2
-              className="text-3xl md:text-4xl font-bold text-gray-900"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Programs Covered by Our <span className="italic text-[var(--radacad-teal)]">Scholarships</span>
-            </h2>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {[
-              {
-                title: "After School Clubs",
-                desc: "Seasonal enrichment clubs (Fall, Winter, Spring) focused on flexible, personalized learning.",
-                image: "/manus-storage/students_activity_2a3e9e07.jpg",
-                icon: Clock,
-              },
-              {
-                title: "Daytime RadAcad Classes",
-                desc: "Full-day personalized learning with academic coaching, online school support, and small-group instruction.",
-                image: "/manus-storage/students_group_c3c058bc.jpg",
-                icon: BookOpen,
-              },
-              {
-                title: "Summer Camps",
-                desc: "Immersive summer programs combining outdoor adventure with academic enrichment in Jackson Hole.",
-                image: "/manus-storage/summer_camp_9578e76c.jpg",
-                icon: Sun,
-              },
-            ].map((program, i) => (
-              <div
-                key={i}
-                className={`bg-white border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow animate-on-scroll animate-on-scroll-delay-${i + 1}`}
-              >
-                <img
-                  src={program.image}
-                  alt={program.title}
-                  className="w-full h-56 object-cover"
-                />
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <program.icon className="h-5 w-5 text-[var(--radacad-teal)]" />
-                    <h3 className="text-lg font-bold text-gray-900">{program.title}</h3>
-                  </div>
-                  <p className="text-sm text-gray-600 leading-relaxed mb-4">{program.desc}</p>
-                  <Link href="/apply" className="text-sm font-semibold text-[var(--radacad-teal)] no-underline inline-flex items-center gap-1 hover:gap-2 transition-all">
-                    Apply for this program <ArrowRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* A Smarter Way to Learn - gradient section like RadAcad */}
       <section className="py-20 md:py-28 relative overflow-hidden" style={{ background: "var(--radacad-gradient)" }}>
@@ -197,7 +144,7 @@ export default function Home() {
               <ul className="space-y-3">
                 {[
                   "Personalized learning plans for every student",
-                  "Daily group activities and outdoor adventures",
+                  "Weekly group activities and outdoor adventures",
                   "One-on-one academic coaching sessions",
                   "Support for online school coursework",
                 ].map((item, i) => (
@@ -212,7 +159,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Daily Group Activities - photo grid like RadAcad */}
+      {/* Weekly Group Activities - photo grid like RadAcad */}
       <section className="py-20 md:py-28">
         <div className="container">
           <div className="text-center mb-12 animate-on-scroll">
@@ -220,10 +167,10 @@ export default function Home() {
               className="text-3xl md:text-4xl font-bold text-gray-900"
               style={{ fontFamily: "var(--font-heading)" }}
             >
-              Daily Group <span className="italic text-[var(--radacad-teal)]">Activities</span>
+              Weekly Group <span className="italic text-[var(--radacad-teal)]">Activities</span>
             </h2>
             <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              Beyond academics, RadAcad students enjoy daily outdoor adventures and group activities in Jackson Hole.
+              Beyond academics, RadAcad students enjoy weekly outdoor adventures and group activities in Jackson Hole.
             </p>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

@@ -17,22 +17,46 @@ export type InsertUser = typeof users.$inferInsert;
 
 export const applications = mysqlTable("applications", {
   id: int("id").autoincrement().primaryKey(),
+  // Scholarship type
+  scholarshipType: mysqlEnum("scholarshipType", ["need_based", "merit_jhsc"]).default("need_based").notNull(),
+  // Student info
   firstName: varchar("firstName", { length: 128 }).notNull(),
   lastName: varchar("lastName", { length: 128 }).notNull(),
   email: varchar("email", { length: 320 }).notNull(),
   phone: varchar("phone", { length: 32 }),
   dateOfBirth: varchar("dateOfBirth", { length: 16 }),
+  gradeLevel: varchar("gradeLevel", { length: 32 }),
+  division: varchar("division", { length: 32 }), // "middle_school" or "high_school" (for merit)
+  currentSchool: varchar("currentSchool", { length: 256 }),
+  parentName: varchar("parentName", { length: 256 }),
+  parentEmail: varchar("parentEmail", { length: 320 }),
+  parentPhone: varchar("parentPhone", { length: 32 }),
   address: text("address"),
   city: varchar("city", { length: 128 }),
   state: varchar("state", { length: 64 }),
   zipCode: varchar("zipCode", { length: 16 }),
   country: varchar("country", { length: 64 }),
+  // Need-based financial info
+  householdIncome: varchar("householdIncome", { length: 128 }),
+  householdSize: varchar("householdSize", { length: 16 }),
+  mfiPercentage: varchar("mfiPercentage", { length: 64 }), // "100_120", "below_100", "not_sure"
+  financialAttestation: boolean("financialAttestation").default(false),
+  // Merit-specific
+  activeJhscMember: boolean("activeJhscMember").default(false),
+  // Legacy fields kept for backward compat
   programInterest: varchar("programInterest", { length: 256 }).notNull(),
   currentEducation: varchar("currentEducation", { length: 256 }),
   employmentStatus: varchar("employmentStatus", { length: 128 }),
   amountRequested: decimal("amountRequested", { precision: 10, scale: 2 }).notNull(),
   financialStatement: text("financialStatement"),
+  // Essays (stored as JSON for multiple questions)
   essay: text("essay").notNull(),
+  essay2: text("essay2"),
+  essay3: text("essay3"),
+  essay4: text("essay4"),
+  // Parent/Guardian statement
+  parentStatement: text("parentStatement"),
+  // Status & review
   status: mysqlEnum("status", ["pending", "under_review", "shortlisted", "approved", "denied"])
     .default("pending")
     .notNull(),
@@ -114,7 +138,8 @@ export const committeeReviews = mysqlTable("committeeReviews", {
   applicationId: int("applicationId").notNull(),
   reviewerName: varchar("reviewerName", { length: 256 }).notNull(),
   reviewerEmail: varchar("reviewerEmail", { length: 320 }),
-  score: int("score").notNull(),
+  score: int("score").notNull(), // total calculated score (sum of rubric)
+  rubricScores: text("rubricScores"), // JSON: {category: score(1-5), ...}
   notes: text("notes"),
   createdAt: timestamp("createdAt").defaultNow().notNull(),
   updatedAt: timestamp("updatedAt").defaultNow().onUpdateNow().notNull(),
