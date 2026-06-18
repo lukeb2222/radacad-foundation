@@ -32,18 +32,18 @@
 - [x] Remove "$200K+ Total Funded" stat from home and donate pages
 - [x] Add RadAcad online school partners section (Virtual Prep Academy, Aeon School, ICL Academy, Laurel Springs)
 - [x] Add scroll-triggered animations (fade-in, slide-up) on public pages (Home, Apply, Donate, Contact)
-- [ ] Rebuild admin dashboard to match Max Martin structure (themed to RadAcad)
-- [ ] Add committee password access + access link tokens (dual-access model)
-- [ ] Add committee member registration (name/email prompt on first login)
-- [ ] Add committee reviews system (individual scores 0-100, notes, attribution)
-- [ ] Add committee file uploads (documents tab with PDF upload, categories, text extraction)
-- [ ] Add AI analysis tab for applications (LLM-powered strengths/weaknesses)
-- [ ] Add Analytics tab with demographics, submission trends, fundraising settings
-- [ ] Add Access Links management in Analytics tab
-- [ ] Add CSV export for applications and donors
-- [ ] Add auto-refresh every 60 seconds
-- [ ] Add applicant detail dialog with 5 tabs (Overview, Essays, Documents, Reviews, AI Analysis)
-- [ ] Theme dashboard to RadAcad teal/green branding (not warm/gold Max Martin colors)
+- [x] Rebuild admin dashboard to match Max Martin structure (themed to RadAcad)
+- [x] Add committee password access + access link tokens (dual-access model)
+- [x] Add committee member registration (name/email prompt on first login)
+- [x] Add committee reviews system (rubric-based scoring, notes, attribution)
+- [x] Add committee file uploads (documents tab with PDF upload, categories, text extraction)
+- [x] Add AI analysis tab for applications (LLM-powered strengths/weaknesses)
+- [x] Add Analytics tab with demographics, submission trends, fundraising settings
+- [x] Add Access Links management in Analytics tab
+- [x] Add CSV export for applications and donors
+- [x] Add auto-refresh every 60 seconds
+- [x] Add applicant detail dialog with 5 tabs (Overview, Essays, Documents, Reviews, AI Analysis)
+- [x] Theme dashboard to RadAcad teal/green branding (not warm/gold Max Martin colors)
 - [x] Rebuild public pages to look exactly like radicalmindsacademy.org (same layout, fonts, colors, animations)
 - [x] Remove Employment Status field from the application form
 - [x] Fix React hooks error in Apply.tsx (moved useScrollAnimation before conditional return)
@@ -68,7 +68,7 @@
 ### Donate Page
 - [x] Replace banner image (remove Christopher on Jackalope)
 - [x] Change fundraising goal to $30,000 by December 31, 2026
-- [ ] Add ability to manually adjust donation total for offline donations (admin setting)
+- [x] Add ability to manually adjust donation total for offline donations (admin setting via Analytics > Fundraising Settings)
 - [x] Change "50 lives changed" to "5 lives changed"
 - [x] Change founding year to 2026
 - [x] Update one-time giving levels ($50, $145, $490, $1200, $2650, $7000) with descriptions
@@ -90,7 +90,7 @@
 - [x] Send contact form submissions directly to garrett.austen@tetontutors.org (via owner notification with full details)
 
 ### Hosting/Ownership
-- [ ] (Info only) Garrett wants to transfer site to his own account for hosting costs - respond in delivery
+- [x] (Info only) Garrett wants to transfer site to his own account for hosting costs - noted for delivery
 - [x] Restrict scholarship applications to daytime school programs only (no summer camps or after-school clubs)
 - [x] Update home page to clarify scholarships only cover daytime school programs (not summer camps or after-school)
 - [x] Remove 3-program grid section from home page (only daytime classes are eligible)
