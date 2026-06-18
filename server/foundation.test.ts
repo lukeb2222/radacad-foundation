@@ -24,6 +24,20 @@ vi.mock("./db", () => ({
   setSetting: vi.fn().mockResolvedValue(undefined),
   upsertUser: vi.fn().mockResolvedValue(undefined),
   getUserByOpenId: vi.fn().mockResolvedValue(undefined),
+  getFundraisingConfig: vi.fn().mockResolvedValue({ goalAmount: "30000", currentAmount: "0", campaignTitle: "Scholarship Fund", description: "" }),
+  updateFundraisingConfig: vi.fn().mockResolvedValue(undefined),
+  getCommitteeMembers: vi.fn().mockResolvedValue([]),
+  upsertCommitteeMember: vi.fn().mockResolvedValue(undefined),
+  getCommitteeReviews: vi.fn().mockResolvedValue([]),
+  createCommitteeReview: vi.fn().mockResolvedValue(1),
+  deleteCommitteeReview: vi.fn().mockResolvedValue(undefined),
+  getCommitteeFiles: vi.fn().mockResolvedValue([]),
+  createCommitteeFile: vi.fn().mockResolvedValue(1),
+  deleteCommitteeFile: vi.fn().mockResolvedValue(undefined),
+  createAccessToken: vi.fn().mockResolvedValue(undefined),
+  validateAccessToken: vi.fn().mockResolvedValue(false),
+  getAccessTokens: vi.fn().mockResolvedValue([]),
+  revokeAccessToken: vi.fn().mockResolvedValue(undefined),
 }));
 
 // Mock notification
@@ -34,6 +48,11 @@ vi.mock("./_core/notification", () => ({
 // Mock stripe
 vi.mock("./stripe", () => ({
   stripe: null,
+}));
+
+// Mock email
+vi.mock("./email", () => ({
+  sendDonorThankYou: vi.fn().mockResolvedValue({ success: true }),
 }));
 
 // Mock LLM
@@ -106,14 +125,29 @@ describe("application.submit", () => {
   it("creates an application with valid input", async () => {
     const caller = appRouter.createCaller(createPublicContext());
     const result = await caller.application.submit({
+      scholarshipType: "need_based",
       firstName: "John",
       lastName: "Doe",
       email: "john@example.com",
-      programInterest: "Power BI Comprehensive",
+      gradeLevel: "9th",
+      schoolName: "Test School",
+      parentName: "Parent Doe",
+      parentEmail: "parent@example.com",
+      parentPhone: "555-1234",
+      householdSize: "4",
+      annualIncome: "45000",
+      mfiPercentage: "below_100",
+      financialNeedAttestation: true,
+      essay1: "I want to attend RadAcad because it offers flexible, personalized learning that fits my schedule and learning style.",
+      essay2: "I value integrity, curiosity, and community — all of which align with RadAcad's core values.",
+      essay3: "I bring a strong work ethic and enthusiasm for collaborative projects to the community.",
+      essay4: "My goal is to complete my high school diploma through an accredited online program while developing real-world skills.",
+      parentStatement: "We fully support our child's desire to attend RadAcad and believe this scholarship will make a meaningful difference.",
+      programInterest: "RadAcad Daytime Classes",
       amountRequested: "2500",
-      essay: "This is my personal statement about why I need this scholarship and how it will help me achieve my career goals in data analytics.",
+      essay: "I want to attend RadAcad because it offers flexible, personalized learning.",
       referrals: [
-        { referrerName: "Jane Smith", referrerEmail: "jane@example.com", relationship: "Manager" },
+        { referrerName: "Jane Smith", referrerEmail: "jane@example.com", relationship: "Teacher" },
       ],
     });
     expect(result).toEqual({ success: true, id: 1 });
@@ -139,7 +173,7 @@ describe("donation.getTotal", () => {
   it("returns the total donations amount", async () => {
     const caller = appRouter.createCaller(createPublicContext());
     const result = await caller.donation.getTotal();
-    expect(result).toEqual({ total: 5000 });
+    expect(result.total).toEqual(5000);
   });
 });
 

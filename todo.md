@@ -94,3 +94,10 @@
 - [x] Restrict scholarship applications to daytime school programs only (no summer camps or after-school clubs)
 - [x] Update home page to clarify scholarships only cover daytime school programs (not summer camps or after-school)
 - [x] Remove 3-program grid section from home page (only daytime classes are eligible)
+
+## Resend Email Integration
+- [x] Install resend npm package
+- [x] Add RESEND_API_KEY secret
+- [x] Create email helper (server/email.ts) with thank-you template
+- [x] Trigger thank-you email on successful Stripe donation webhook (checkout.session.completed)
+- [x] All 15 tests passing including Resend API key validation

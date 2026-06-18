@@ -144,7 +144,6 @@ export default function Home() {
               <ul className="space-y-3">
                 {[
                   "Personalized learning plans for every student",
-                  "Weekly group activities and outdoor adventures",
                   "One-on-one academic coaching sessions",
                   "Support for online school coursework",
                 ].map((item, i) => (
@@ -159,40 +158,7 @@ export default function Home() {
         </div>
       </section>
 
-      {/* Weekly Group Activities - photo grid like RadAcad */}
-      <section className="py-20 md:py-28">
-        <div className="container">
-          <div className="text-center mb-12 animate-on-scroll">
-            <h2
-              className="text-3xl md:text-4xl font-bold text-gray-900"
-              style={{ fontFamily: "var(--font-heading)" }}
-            >
-              Weekly Group <span className="italic text-[var(--radacad-teal)]">Activities</span>
-            </h2>
-            <p className="text-gray-600 mt-4 max-w-2xl mx-auto">
-              Beyond academics, RadAcad students enjoy weekly outdoor adventures and group activities in Jackson Hole.
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            {[
-              { src: "/manus-storage/rock_climbing_15c08c2f.jpg", label: "ROCK CLIMBING" },
-              { src: "/manus-storage/backcountry_skiing_58090314.jpg", label: "BACKCOUNTRY SKIING" },
-              { src: "/manus-storage/friday_field_trips_e3171c43.jpg", label: "FRIDAY FIELD TRIPS" },
-              { src: "/manus-storage/students_activity_2a3e9e07.jpg", label: "GROUP ACTIVITIES" },
-            ].map((activity, i) => (
-              <div
-                key={i}
-                className={`relative group overflow-hidden animate-on-scroll animate-on-scroll-delay-${i + 1}`}
-              >
-                <img src={activity.src} alt={activity.label} className="w-full h-48 md:h-64 object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent flex items-end p-4">
-                  <span className="text-white text-xs font-bold tracking-wider">{activity.label}</span>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+
 
       {/* How to Apply - Step cards like RadAcad's "Tailored Learning Plans" enrollment steps */}
       <section className="py-20 md:py-28 bg-gray-50">

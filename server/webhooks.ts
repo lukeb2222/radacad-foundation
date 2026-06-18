@@ -2,6 +2,7 @@ import { Router, raw } from "express";
 import { stripe } from "./stripe";
 import { updateDonationStatus } from "./db";
 import { notifyOwner } from "./_core/notification";
+import { sendDonorThankYou } from "./email";
 
 const webhookRouter = Router();
 
@@ -48,6 +49,16 @@ webhookRouter.post(
             title: "New Donation Received",
             content: `${donorName} donated $${amount} to the RadAcad Foundation Scholarship Fund.`,
           });
+
+          // Send thank-you email to donor
+          const donorEmail = session.customer_email || session.metadata?.customer_email;
+          if (donorEmail) {
+            await sendDonorThankYou({
+              to: donorEmail,
+              donorName,
+              amount,
+            });
+          }
           break;
         }
         case "payment_intent.payment_failed": {
