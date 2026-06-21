@@ -295,7 +295,7 @@ export default function Apply() {
               Apply for a <span className="italic text-teal-300">Scholarship</span>
             </h1>
             <p className="text-white/80 max-w-xl mx-auto">
-              Choose the scholarship type that applies to you. Scholarships cover RadAcad daytime classes only — summer camps, after-school clubs, and monthly memberships are not eligible.
+              Choose the scholarship type that applies to you.
             </p>
           </div>
         </section>
@@ -418,7 +418,7 @@ export default function Apply() {
         <div className="container max-w-2xl">
           {/* Step 1: Student Info */}
           {step === 1 && (
-            <div className="space-y-6 animate-on-scroll">
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
                 Student Information
               </h2>
@@ -482,7 +482,7 @@ export default function Apply() {
 
           {/* Step 2: Financial (Need-Based) or JHSC Info (Merit) */}
           {step === 2 && scholarshipType === "need_based" && (
-            <div className="space-y-6 animate-on-scroll">
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
                 Household Financial Information
               </h2>
@@ -529,7 +529,7 @@ export default function Apply() {
           )}
 
           {step === 2 && scholarshipType === "merit_jhsc" && (
-            <div className="space-y-6 animate-on-scroll">
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
                 JHSC Membership & Division
               </h2>
@@ -565,7 +565,7 @@ export default function Apply() {
 
           {/* Step 3: Essays */}
           {step === 3 && (
-            <div className="space-y-8 animate-on-scroll">
+            <div className="space-y-8">
               <div>
                 <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
                   Student Questionnaire
@@ -602,7 +602,7 @@ export default function Apply() {
 
           {/* Step 4: Parent Statement */}
           {step === 4 && (
-            <div className="space-y-6 animate-on-scroll">
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
                 Parent/Guardian Statement
               </h2>
@@ -630,7 +630,7 @@ export default function Apply() {
 
           {/* Step 5: Recommendations */}
           {step === 5 && (
-            <div className="space-y-6 animate-on-scroll">
+            <div className="space-y-6">
               <h2 className="text-2xl font-bold text-gray-900" style={{ fontFamily: "var(--font-heading)" }}>
                 {scholarshipType === "merit_jhsc" ? "Recommendations" : "Recommendation (Optional)"}
               </h2>

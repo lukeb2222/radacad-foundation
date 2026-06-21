@@ -809,6 +809,8 @@ export default function Dashboard() {
                         <th className="text-left p-4 font-medium" style={{ color: "#1C2127" }}>Program</th>
                         <th className="text-left p-4 font-medium" style={{ color: "#1C2127" }}>Amount</th>
                         <th className="text-left p-4 font-medium" style={{ color: "#1C2127" }}>Submitted</th>
+                        <th className="text-left p-4 font-medium" style={{ color: "#1C2127" }}>Avg Score</th>
+                        <th className="text-left p-4 font-medium" style={{ color: "#1C2127" }}>Reviews</th>
                         <th className="text-left p-4 font-medium" style={{ color: "#1C2127" }}>Status</th>
                         <th className="text-left p-4 font-medium" style={{ color: "#1C2127" }}>Actions</th>
                       </tr>
@@ -823,6 +825,16 @@ export default function Dashboard() {
                           <td className="p-4" style={{ color: "#3D3D3D" }}>{app.programInterest}</td>
                           <td className="p-4 font-semibold" style={{ color: "#1C2127" }}>${app.amountRequested}</td>
                           <td className="p-4" style={{ color: "#6B6B6B" }}>{new Date(app.createdAt).toLocaleDateString()}</td>
+                          <td className="p-4">
+                            {(app as any).avgScore != null ? (
+                              <span className="font-semibold" style={{ color: "#1C2127" }}>{(app as any).avgScore}/30</span>
+                            ) : (
+                              <span className="text-xs" style={{ color: "#8B7D6B" }}>—</span>
+                            )}
+                          </td>
+                          <td className="p-4">
+                            <span className="text-sm" style={{ color: "#6B6B6B" }}>{(app as any).reviewCount ?? 0}</span>
+                          </td>
                           <td className="p-4">{statusBadge(app.status, app.overallScore)}</td>
                           <td className="p-4">
                             <Button size="sm" variant="outline" onClick={() => setSelectedAppId(app.id)} style={{ color: "#4A6FA5", borderColor: "#4A6FA5" }}>

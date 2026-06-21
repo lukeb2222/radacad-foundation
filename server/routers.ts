@@ -151,9 +151,12 @@ export const appRouter = router({
 
   donation: router({
     getTotal: publicProcedure.query(async () => {
-      const total = await getTotalDonations();
+      const stripeTotal = await getTotalDonations();
       const config = await getFundraisingConfig();
-      return { total, goal: config ? Number(config.goalAmount) : 50000, campaignTitle: config?.campaignTitle || "Scholarship Fund" };
+      // Add manual offset (offline donations, adjustments) from fundraising config
+      const manualOffset = config ? Number(config.currentAmount) : 0;
+      const total = stripeTotal + manualOffset;
+      return { total, goal: config ? Number(config.goalAmount) : 30000, campaignTitle: config?.campaignTitle || "Scholarship Fund" };
     }),
     createCheckout: publicProcedure
       .input(
@@ -265,7 +268,14 @@ export const appRouter = router({
     // Applications
     applications: router({
       list: publicProcedure.query(async () => {
-        return getApplications();
+        const apps = await getApplications();
+        // Attach review count and average score to each application
+        const appsWithScores = await Promise.all(apps.map(async (app) => {
+          const avgScore = await getAverageScoreForApplication(app.id);
+          const reviews = await getReviewsByApplicationId(app.id);
+          return { ...app, avgScore, reviewCount: reviews.length };
+        }));
+        return appsWithScores;
       }),
       stats: publicProcedure.query(async () => {
         return getApplicationStats();

@@ -101,3 +101,10 @@
 - [x] Create email helper (server/email.ts) with thank-you template
 - [x] Trigger thank-you email on successful Stripe donation webhook (checkout.session.completed)
 - [x] All 15 tests passing including Resend API key validation
+
+## Garrett's Second Email Changes
+- [ ] Delete "Scholarships apply to RadAcad daytime classes only..." text from Home page
+- [ ] Delete scholarship eligibility note from Apply page ("Choose the scholarship type...")
+- [ ] Fix blank application form bug (form fields invisible after clicking scholarship type)
+- [ ] Fix donation thermometer settings (Analytics tab adjustments not taking effect)
+- [ ] Fix committee review visibility (show own scores, other reviewers' scores, average)

@@ -41,7 +41,7 @@ export default function Home() {
           </p>
           <p className="text-base text-gray-600 leading-relaxed mb-8">
             We believe every middle and high school student in Jackson, Alpine, Victor, and Driggs deserves access to
-            personalized, flexible education — regardless of financial circumstances. Scholarships apply to RadAcad daytime classes only (not summer camps, after-school clubs, or monthly memberships).
+            personalized, flexible education — regardless of financial circumstances.
           </p>
           <Link href="/apply">
             <button className="bg-[var(--radacad-teal)] text-white px-8 py-3 text-sm font-semibold hover:bg-[#249e8b] transition-colors inline-flex items-center gap-2">
