@@ -103,8 +103,8 @@
 - [x] All 15 tests passing including Resend API key validation
 
 ## Garrett's Second Email Changes
-- [ ] Delete "Scholarships apply to RadAcad daytime classes only..." text from Home page
-- [ ] Delete scholarship eligibility note from Apply page ("Choose the scholarship type...")
-- [ ] Fix blank application form bug (form fields invisible after clicking scholarship type)
-- [ ] Fix donation thermometer settings (Analytics tab adjustments not taking effect)
-- [ ] Fix committee review visibility (show own scores, other reviewers' scores, average)
+- [x] Delete "Scholarships apply to RadAcad daytime classes only..." text from Home page
+- [x] Delete scholarship eligibility note from Apply page ("Choose the scholarship type...")
+- [x] Fix blank application form bug (animate-on-scroll kept form at opacity:0)
+- [x] Fix donation thermometer settings (manual offset from Analytics now added to Stripe total)
+- [x] Fix committee review visibility (Avg Score + Reviews count columns added to applications table; own rubric details visible, others show total only)
