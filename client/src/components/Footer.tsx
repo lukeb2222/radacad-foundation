@@ -8,7 +8,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <img
-              src="/manus-storage/radacad_foundation_logo_d430f3e8.png"
+              src="/manus-storage/radacad_foundation_logo_d430f3e8_db98a096.png"
               alt="RadAcad Foundation"
               className="h-12 mb-4"
             />

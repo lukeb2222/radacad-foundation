@@ -72,7 +72,7 @@ export default function Contact() {
       {/* Hero */}
       <section className="relative pt-32 pb-16 md:pt-36 md:pb-20 overflow-hidden">
         <div className="absolute inset-0">
-          <img src="/manus-storage/backcountry_skiing_58090314.jpg" alt="RadAcad outdoor activities" className="w-full h-full object-cover" />
+          <img src="/manus-storage/backcountry_skiing_58090314_ca87b397.jpg" alt="RadAcad outdoor activities" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-[#1a2332]/80" />
         </div>
         <div className="container relative z-10 text-center">

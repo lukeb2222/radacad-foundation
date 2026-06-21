@@ -20,7 +20,7 @@ export default function Home() {
       <section className="relative">
         <div className="w-full h-[500px] md:h-[600px]">
           <img
-            src="/manus-storage/teton_mountains_hero_5b3099a7.jpg"
+            src="/manus-storage/teton_mountains_hero_5b3099a7_2ab00c4a.jpg"
             alt="Grand Teton Mountains in Jackson Hole"
             className="w-full h-full object-cover"
           />
@@ -60,14 +60,14 @@ export default function Home() {
         </div>
         <div className="relative">
           <div className="flex animate-marquee gap-20 items-center px-8">
-            <img src="/manus-storage/virtual_prep_logo_ee0415f7.jpg" alt="Virtual Preparatory Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
-            <img src="/manus-storage/aeon_school_logo_3e116bc9.jpg" alt="Aeon School" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
-            <img src="/manus-storage/icl_academy_logo_035d333d.jpg" alt="ICL Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
-            <img src="/manus-storage/laurel_springs_logo_78c241ec.webp" alt="Laurel Springs" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
-            <img src="/manus-storage/virtual_prep_logo_ee0415f7.jpg" alt="Virtual Preparatory Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
-            <img src="/manus-storage/aeon_school_logo_3e116bc9.jpg" alt="Aeon School" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
-            <img src="/manus-storage/icl_academy_logo_035d333d.jpg" alt="ICL Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
-            <img src="/manus-storage/laurel_springs_logo_78c241ec.webp" alt="Laurel Springs" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/virtual_prep_logo_ee0415f7_10d247b1.jpg" alt="Virtual Preparatory Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/aeon_school_logo_3e116bc9_277378d7.jpg" alt="Aeon School" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/icl_academy_logo_035d333d_53b2747f.jpg" alt="ICL Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/laurel_springs_logo_78c241ec_2dccb72d.webp" alt="Laurel Springs" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/virtual_prep_logo_ee0415f7_10d247b1.jpg" alt="Virtual Preparatory Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/aeon_school_logo_3e116bc9_277378d7.jpg" alt="Aeon School" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/icl_academy_logo_035d333d_53b2747f.jpg" alt="ICL Academy" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
+            <img src="/manus-storage/laurel_springs_logo_78c241ec_2dccb72d.webp" alt="Laurel Springs" className="h-10 md:h-14 object-contain grayscale hover:grayscale-0 transition-all" />
           </div>
         </div>
       </section>
@@ -125,7 +125,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="animate-on-scroll">
               <img
-                src="/manus-storage/students_learning_8ffdc173.jpg"
+                src="/manus-storage/students_learning_8ffdc173_65e499ac.jpg"
                 alt="Students learning at RadAcad"
                 className="w-72 h-72 md:w-96 md:h-96 object-cover rounded-full mx-auto border-4 border-white/20"
               />

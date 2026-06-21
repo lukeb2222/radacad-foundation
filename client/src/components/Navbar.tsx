@@ -31,7 +31,7 @@ export default function Navbar() {
         <div className="container flex items-center justify-between h-20">
           <Link href="/" className="flex items-center no-underline">
             <img
-              src="/manus-storage/radacad_foundation_logo_d430f3e8.png"
+              src="/manus-storage/radacad_foundation_logo_d430f3e8_db98a096.png"
               alt="RadAcad Foundation"
               className="h-14"
             />

@@ -284,7 +284,7 @@ export default function Apply() {
         <Navbar />
         <section className="relative pt-32 pb-16 md:pt-36 md:pb-20 overflow-hidden">
           <div className="absolute inset-0">
-            <img src="/manus-storage/summer_camp_9578e76c.jpg" alt="RadAcad students" className="w-full h-full object-cover" />
+            <img src="/manus-storage/summer_camp_9578e76c_95548b46.jpg" alt="RadAcad students" className="w-full h-full object-cover" />
             <div className="absolute inset-0 bg-[#1a2332]/80" />
           </div>
           <div className="container relative z-10 text-center">
@@ -369,7 +369,7 @@ export default function Apply() {
       {/* Hero */}
       <section className="relative pt-32 pb-16 md:pt-36 md:pb-20 overflow-hidden">
         <div className="absolute inset-0">
-          <img src="/manus-storage/summer_camp_9578e76c.jpg" alt="RadAcad students" className="w-full h-full object-cover" />
+          <img src="/manus-storage/summer_camp_9578e76c_95548b46.jpg" alt="RadAcad students" className="w-full h-full object-cover" />
           <div className="absolute inset-0 bg-[#1a2332]/80" />
         </div>
         <div className="container relative z-10 text-center">
