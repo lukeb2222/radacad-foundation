@@ -108,3 +108,13 @@
 - [x] Fix blank application form bug (animate-on-scroll kept form at opacity:0)
 - [x] Fix donation thermometer settings (manual offset from Analytics now added to Stripe total)
 - [x] Fix committee review visibility (Avg Score + Reviews count columns added to applications table; own rubric details visible, others show total only)
+
+## Garrett's Third Email Changes
+- [x] Fix Home page bullet list items to be complete sentences (A Smarter Way to Learn section)
+- [x] Fix Apply page scholarship card descriptions to be complete sentences ("These scholarships are for...")
+- [x] Fix donation thermometer goal: was hardcoded to $30,000, now reads from server config
+- [ ] Fix application review dialog flashing (ApplicationDetailDialog defined inline causes remount on every render)
+- [ ] Fix review not saving to applicant profile (investigate and fix)
+- [ ] Remove Contact page (Garrett wants to remove it; direct people to email)
+- [ ] Fix favicon: use icon-only transparent PNG (no text)
+- [ ] Export project to GitHub under garrettausten's account

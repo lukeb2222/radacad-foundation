@@ -26,14 +26,13 @@ const MONTHLY_TIERS = [
 ];
 
 const STRIPE_DONATE_LINK = "https://donate.stripe.com/aFafZj5Qg83mckN5rJa3u00";
-const GOAL = 30000;
-
 export default function Donate() {
   const [frequency, setFrequency] = useState<"one_time" | "monthly">("one_time");
   const [selectedAmount, setSelectedAmount] = useState<number | null>(null);
 
   const { data: totalData } = trpc.donation.getTotal.useQuery();
   const totalRaised = totalData?.total || 0;
+  const GOAL = totalData?.goal || 30000;
   const progress = Math.min((totalRaised / GOAL) * 100, 100);
 
   const tiers = frequency === "monthly" ? MONTHLY_TIERS : ONE_TIME_TIERS;
@@ -78,7 +77,7 @@ export default function Donate() {
             <h2 className="text-2xl font-bold" style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               2026 Scholarship Fund
             </h2>
-            <p className="text-sm text-muted-foreground mt-1">Goal: $30,000 by December 31, 2026</p>
+            <p className="text-sm text-muted-foreground mt-1">Goal: ${GOAL.toLocaleString()} by December 31, 2026</p>
           </div>
 
           <div className="mb-4">

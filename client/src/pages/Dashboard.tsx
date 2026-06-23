@@ -336,353 +336,24 @@ export default function Dashboard() {
   };
 
   // ─── Application Detail Dialog ──────────────────────────────────────────────
+  // Rendered as a stable component call with props to prevent remounting on every render
 
-  const ApplicationDetailDialog = () => {
-    const [detailTab, setDetailTab] = useState("overview");
-    const [reviewScore, setReviewScore] = useState("");
-    const [reviewNotes, setReviewNotes] = useState("");
-    const [noteContent, setNoteContent] = useState("");
-    const [overallScoreInput, setOverallScoreInput] = useState("");
-    const [committeeNotesInput, setCommitteeNotesInput] = useState("");
+  const ApplicationDetailDialog = () => (
+    <ApplicationDetailDialogComponent
+      selectedAppId={selectedAppId}
+      setSelectedAppId={setSelectedAppId}
+      appDetail={appDetail}
+      identity={identity}
+      addReviewMutation={addReviewMutation}
+      updateScoreMutation={updateScoreMutation}
+      updateStatusMutation={updateStatusMutation}
+      addNoteMutation={addNoteMutation}
+      aiAnalyzeMutation={aiAnalyzeMutation}
+      statusBadge={statusBadge}
+    />
+  );
 
-    useEffect(() => {
-      if (appDetail) {
-        setOverallScoreInput(appDetail.overallScore?.toString() || "");
-        setCommitteeNotesInput(appDetail.committeeNotes || "");
-      }
-    }, [appDetail]);
-
-    if (!appDetail) return null;
-
-    const aiData = appDetail.aiAnalysis ? (() => {
-      try { return JSON.parse(appDetail.aiAnalysis); } catch { return null; }
-    })() : null;
-
-    return (
-      <Dialog open={!!selectedAppId} onOpenChange={() => setSelectedAppId(null)}>
-        <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="font-serif text-xl flex items-center gap-3">
-              {appDetail.firstName} {appDetail.lastName}
-              {statusBadge(appDetail.status, appDetail.avgScore)}
-            </DialogTitle>
-          </DialogHeader>
-
-          <Tabs value={detailTab} onValueChange={setDetailTab}>
-            <TabsList className="w-full">
-              <TabsTrigger value="overview">Overview</TabsTrigger>
-              <TabsTrigger value="essay">Essay</TabsTrigger>
-              <TabsTrigger value="documents">Documents</TabsTrigger>
-              <TabsTrigger value="reviews">Reviews</TabsTrigger>
-              <TabsTrigger value="ai">AI Analysis</TabsTrigger>
-            </TabsList>
-
-            {/* Overview Tab */}
-            <TabsContent value="overview" className="space-y-4 mt-4">
-              {/* Scholarship type badge */}
-              <div className="flex items-center gap-2 mb-2">
-                <Badge className={(appDetail as any).scholarshipType === "merit_jhsc" ? "bg-purple-100 text-purple-700 hover:bg-purple-100" : "bg-teal-100 text-teal-700 hover:bg-teal-100"}>
-                  {(appDetail as any).scholarshipType === "merit_jhsc" ? "JHSC Merit Scholarship" : "Need-Based Scholarship"}
-                </Badge>
-                {(appDetail as any).division && (
-                  <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">
-                    {(appDetail as any).division === "high_school" ? "High School" : "Middle School"}
-                  </Badge>
-                )}
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                {[
-                  { label: "Email", value: appDetail.email },
-                  { label: "Phone", value: appDetail.phone || (appDetail as any).parentPhone || "N/A" },
-                  { label: "Grade Level", value: (appDetail as any).gradeLevel || "N/A" },
-                  { label: "Current School", value: (appDetail as any).currentSchool || "N/A" },
-                  { label: "Parent/Guardian", value: (appDetail as any).parentName || "N/A" },
-                  { label: "Parent Email", value: (appDetail as any).parentEmail || "N/A" },
-                  { label: "Scholarship Type", value: (appDetail as any).scholarshipType === "merit_jhsc" ? "JHSC Merit" : "Need-Based" },
-                  { label: "Submitted", value: new Date(appDetail.createdAt).toLocaleDateString() },
-                ].map(item => (
-                  <div key={item.label} className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                    <p className="text-xs" style={{ color: "#8B7D6B" }}>{item.label}</p>
-                    <p className="text-sm font-medium" style={{ color: "#1C2127" }}>{item.value}</p>
-                  </div>
-                ))}
-              </div>
-              {/* Need-based financial info */}
-              {(appDetail as any).scholarshipType === "need_based" && (appDetail as any).householdIncome && (
-                <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                  <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>Financial Information</p>
-                  <p className="text-sm" style={{ color: "#1C2127" }}>
-                    Household Income: {(appDetail as any).householdIncome} | Size: {(appDetail as any).householdSize || "N/A"} | MFI: {(appDetail as any).mfiPercentage === "100_120" ? "100-120%" : (appDetail as any).mfiPercentage === "below_100" ? "Below 100%" : "Not sure"}
-                  </p>
-                </div>
-              )}
-              {/* Merit JHSC info */}
-              {(appDetail as any).scholarshipType === "merit_jhsc" && (
-                <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                  <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>JHSC Membership</p>
-                  <p className="text-sm" style={{ color: "#1C2127" }}>
-                    Active JHSC Member: {(appDetail as any).activeJhscMember ? "Yes" : "No"}
-                  </p>
-                </div>
-              )}
-              {appDetail.address && (
-                <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                  <p className="text-xs" style={{ color: "#8B7D6B" }}>Address</p>
-                  <p className="text-sm" style={{ color: "#1C2127" }}>
-                    {appDetail.address}{appDetail.city ? `, ${appDetail.city}` : ""}{appDetail.state ? `, ${appDetail.state}` : ""} {appDetail.zipCode || ""}
-                  </p>
-                </div>
-              )}
-              {appDetail.financialStatement && (
-                <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                  <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>Financial Statement</p>
-                  <p className="text-sm whitespace-pre-wrap" style={{ color: "#3D3D3D" }}>{appDetail.financialStatement}</p>
-                </div>
-              )}
-              {/* Referrals */}
-              {appDetail.referrals && appDetail.referrals.length > 0 && (
-                <div>
-                  <h4 className="text-sm font-medium mb-2" style={{ color: "#1C2127" }}>Referrals</h4>
-                  <div className="space-y-2">
-                    {appDetail.referrals.map((ref: any) => (
-                      <div key={ref.id} className="p-3 rounded border border-gray-200 flex items-center justify-between" style={{ background: "#FAFAF8" }}>
-                        <div>
-                          <p className="text-sm font-medium">{ref.referrerName}</p>
-                          <p className="text-xs" style={{ color: "#6B6B6B" }}>{ref.referrerEmail} &middot; {ref.relationship}</p>
-                        </div>
-                        <Users className="h-4 w-4" style={{ color: "#8B7D6B" }} />
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Essay Tab */}
-            <TabsContent value="essay" className="mt-4 space-y-4">
-              {[appDetail.essay, (appDetail as any).essay2, (appDetail as any).essay3, (appDetail as any).essay4].map((essayText, i) => (
-                essayText && (
-                  <div key={i} className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                    <p className="text-xs font-medium mb-2" style={{ color: "#8B7D6B" }}>Essay {i + 1}</p>
-                    <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color: "#3D3D3D" }}>{essayText}</p>
-                  </div>
-                )
-              ))}
-              {(appDetail as any).parentStatement && (
-                <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                  <p className="text-xs font-medium mb-2" style={{ color: "#8B7D6B" }}>Parent/Guardian Statement</p>
-                  <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color: "#3D3D3D" }}>{(appDetail as any).parentStatement}</p>
-                </div>
-              )}
-            </TabsContent>
-
-            {/* Documents Tab */}
-            <TabsContent value="documents" className="mt-4 space-y-4">
-              {appDetail.files && appDetail.files.length > 0 ? (
-                <div className="space-y-2">
-                  {appDetail.files.map((file: any) => (
-                    <div key={file.id} className="p-3 rounded border border-gray-200 flex items-center justify-between">
-                      <div className="flex items-center gap-2">
-                        <FileText className="h-4 w-4" style={{ color: "#4A6FA5" }} />
-                        <div>
-                          <p className="text-sm font-medium">{file.filename}</p>
-                          <p className="text-xs" style={{ color: "#6B6B6B" }}>{file.category} &middot; {file.uploaderName || "Unknown"}</p>
-                        </div>
-                      </div>
-                      <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
-                        <Button size="sm" variant="ghost"><ExternalLink className="h-3 w-3" /></Button>
-                      </a>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <p className="text-sm text-center py-8" style={{ color: "#8B7D6B" }}>No documents uploaded yet.</p>
-              )}
-            </TabsContent>
-
-            {/* Reviews Tab */}
-            <TabsContent value="reviews" className="mt-4 space-y-4">
-              {/* Rubric-based review form */}
-              <RubricReviewForm
-                scholarshipType={(appDetail as any).scholarshipType || "need_based"}
-                applicationId={selectedAppId!}
-                identity={identity}
-                addReviewMutation={addReviewMutation}
-              />
-
-              {/* Existing reviews */}
-              {appDetail.reviews && appDetail.reviews.length > 0 ? (
-                <div className="space-y-3">
-                  <h4 className="text-sm font-medium" style={{ color: "#1C2127" }}>All Reviews ({appDetail.reviews.length})</h4>
-                  {appDetail.reviews.map((review: any) => {
-                    const isOwnReview = identity && review.reviewerEmail === identity.email;
-                    const rubric = review.rubricScores ? (() => { try { return JSON.parse(review.rubricScores); } catch { return null; } })() : null;
-                    return (
-                      <div key={review.id} className={`p-4 rounded border ${isOwnReview ? 'border-blue-300 bg-blue-50/30' : 'border-gray-200'}`}>
-                        <div className="flex items-start gap-3">
-                          <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: isOwnReview ? "#2563eb" : "#4A6FA5" }}>
-                            {review.reviewerName.charAt(0).toUpperCase()}
-                          </div>
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2">
-                              <span className="text-sm font-medium">{review.reviewerName}</span>
-                              {isOwnReview && <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">You</Badge>}
-                              <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Total: {review.score}/30</Badge>
-                            </div>
-                            {/* Show detailed rubric only for own reviews */}
-                            {isOwnReview && rubric && (
-                              <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
-                                {Object.entries(rubric).map(([cat, score]) => (
-                                  <div key={cat} className="text-xs p-1.5 rounded bg-gray-50 border">
-                                    <span style={{ color: "#8B7D6B" }}>{cat}:</span>{" "}
-                                    <span className="font-semibold">{score as number}/5</span>
-                                  </div>
-                                ))}
-                              </div>
-                            )}
-                            {/* For others' reviews, just show total */}
-                            {!isOwnReview && (
-                              <p className="text-xs mt-1" style={{ color: "#8B7D6B" }}>Detailed rubric scores visible only to reviewer</p>
-                            )}
-                            {isOwnReview && review.notes && <p className="text-sm mt-2" style={{ color: "#3D3D3D" }}>{review.notes}</p>}
-                            <p className="text-xs mt-1" style={{ color: "#8B7D6B" }}>{new Date(review.createdAt).toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <p className="text-sm text-center py-4" style={{ color: "#8B7D6B" }}>No reviews yet. Be the first to review!</p>
-              )}
-
-              <Separator />
-
-              {/* Status & Score Update */}
-              <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                <h4 className="text-sm font-medium mb-3">Status & Score</h4>
-                <div className="grid grid-cols-2 gap-3 mb-3">
-                  <div>
-                    <label className="text-xs" style={{ color: "#8B7D6B" }}>Overall Score</label>
-                    <Input type="number" min="0" max="100" value={overallScoreInput} onChange={(e) => setOverallScoreInput(e.target.value)} />
-                  </div>
-                  <div>
-                    <label className="text-xs" style={{ color: "#8B7D6B" }}>Status</label>
-                    <Select value={appDetail.status} onValueChange={(val) => updateStatusMutation.mutate({ id: selectedAppId!, status: val as any })}>
-                      <SelectTrigger><SelectValue /></SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="under_review">Under Review</SelectItem>
-                        <SelectItem value="shortlisted">Shortlisted</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="denied">Denied</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <div className="mb-3">
-                  <label className="text-xs" style={{ color: "#8B7D6B" }}>Committee Notes</label>
-                  <Textarea value={committeeNotesInput} onChange={(e) => setCommitteeNotesInput(e.target.value)} rows={2} />
-                </div>
-                <Button
-                  size="sm"
-                  className="text-white"
-                  style={{ background: "#4A6FA5" }}
-                  onClick={() => updateScoreMutation.mutate({
-                    id: selectedAppId!,
-                    score: overallScoreInput ? parseInt(overallScoreInput) : null,
-                    notes: committeeNotesInput || undefined,
-                  })}
-                >
-                  Save
-                </Button>
-              </div>
-            </TabsContent>
-
-            {/* AI Analysis Tab */}
-            <TabsContent value="ai" className="mt-4">
-              {aiData ? (
-                <div className="space-y-4">
-                  <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
-                    <p className="text-sm leading-relaxed" style={{ color: "#3D3D3D" }}>{aiData.summary}</p>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Badge className={
-                      aiData.recommendation === "Strong Candidate" ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100" :
-                      aiData.recommendation === "Weak Candidate" ? "bg-red-100 text-red-700 hover:bg-red-100" :
-                      "bg-yellow-100 text-yellow-700 hover:bg-yellow-100"
-                    }>
-                      {aiData.recommendation}
-                    </Badge>
-                    <span className="text-sm font-medium" style={{ color: "#4A6FA5" }}>Suggested Score: {aiData.recommendedScore}/100</span>
-                  </div>
-                  {aiData.keyPoints && aiData.keyPoints.length > 0 && (
-                    <div>
-                      <h4 className="text-sm font-medium mb-2">Key Points</h4>
-                      <ul className="space-y-1">
-                        {aiData.keyPoints.map((p: string, i: number) => (
-                          <li key={i} className="text-sm flex items-start gap-2" style={{ color: "#3D3D3D" }}>
-                            <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#4A6FA5" }} />
-                            {p}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  <div className="grid grid-cols-2 gap-3">
-                    {aiData.strengths && aiData.strengths.length > 0 && (
-                      <div className="p-3 rounded border border-green-200 bg-green-50">
-                        <h5 className="text-xs font-medium text-green-700 mb-2">Strengths</h5>
-                        <ul className="space-y-1">
-                          {aiData.strengths.map((s: string, i: number) => (
-                            <li key={i} className="text-xs text-green-800 flex items-start gap-1">
-                              <CheckCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />{s}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {aiData.weaknesses && aiData.weaknesses.length > 0 && (
-                      <div className="p-3 rounded border border-red-200 bg-red-50">
-                        <h5 className="text-xs font-medium text-red-700 mb-2">Areas of Concern</h5>
-                        <ul className="space-y-1">
-                          {aiData.weaknesses.map((w: string, i: number) => (
-                            <li key={i} className="text-xs text-red-800 flex items-start gap-1">
-                              <XCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />{w}
-                            </li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                  <Button size="sm" variant="outline" onClick={() => aiAnalyzeMutation.mutate({ id: selectedAppId! })} disabled={aiAnalyzeMutation.isPending}>
-                    {aiAnalyzeMutation.isPending ? "Regenerating..." : "Regenerate"}
-                  </Button>
-                  {appDetail.aiAnalysisGeneratedAt && (
-                    <p className="text-xs" style={{ color: "#8B7D6B" }}>Generated: {new Date(appDetail.aiAnalysisGeneratedAt).toLocaleString()}</p>
-                  )}
-                </div>
-              ) : (
-                <div className="text-center py-12">
-                  <Sparkles className="h-12 w-12 mx-auto mb-4" style={{ color: "#D4A574" }} />
-                  <h4 className="font-medium mb-2" style={{ color: "#1C2127" }}>AI-Powered Analysis</h4>
-                  <p className="text-sm mb-4" style={{ color: "#6B6B6B" }}>Generate an AI analysis of this application including strengths, concerns, and a recommended score.</p>
-                  <Button
-                    className="text-white"
-                    style={{ background: "#4A6FA5" }}
-                    onClick={() => aiAnalyzeMutation.mutate({ id: selectedAppId! })}
-                    disabled={aiAnalyzeMutation.isPending}
-                  >
-                    {aiAnalyzeMutation.isPending ? "Generating..." : "Generate Analysis"}
-                  </Button>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
-        </DialogContent>
-      </Dialog>
-    );
-  };
+  // (ApplicationDetailDialogComponent is defined outside this component below - see bottom of file)
 
   // ─── Main Dashboard ─────────────────────────────────────────────────────────
 
@@ -1300,5 +971,361 @@ function RubricReviewForm({ scholarshipType, applicationId, identity, addReviewM
         </Button>
       </div>
     </div>
+  );
+}
+
+// ─── Application Detail Dialog (standalone to prevent remounting) ────────────
+
+type AppDetailDialogProps = {
+  selectedAppId: number | null;
+  setSelectedAppId: (id: number | null) => void;
+  appDetail: any;
+  identity: { name: string; email: string } | null;
+  addReviewMutation: any;
+  updateScoreMutation: any;
+  updateStatusMutation: any;
+  addNoteMutation: any;
+  aiAnalyzeMutation: any;
+  statusBadge: (status: string, avgScore?: number | null) => React.ReactNode;
+};
+
+function ApplicationDetailDialogComponent({
+  selectedAppId,
+  setSelectedAppId,
+  appDetail,
+  identity,
+  addReviewMutation,
+  updateScoreMutation,
+  updateStatusMutation,
+  addNoteMutation,
+  aiAnalyzeMutation,
+  statusBadge,
+}: AppDetailDialogProps) {
+  const [detailTab, setDetailTab] = useState("overview");
+  const [overallScoreInput, setOverallScoreInput] = useState("");
+  const [committeeNotesInput, setCommitteeNotesInput] = useState("");
+
+  useEffect(() => {
+    if (appDetail) {
+      setOverallScoreInput(appDetail.overallScore?.toString() || "");
+      setCommitteeNotesInput(appDetail.committeeNotes || "");
+    }
+  }, [appDetail?.id]);
+
+  if (!appDetail) return null;
+
+  const aiData = appDetail.aiAnalysis ? (() => {
+    try { return JSON.parse(appDetail.aiAnalysis); } catch { return null; }
+  })() : null;
+
+  return (
+    <Dialog open={!!selectedAppId} onOpenChange={() => setSelectedAppId(null)}>
+      <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle className="font-serif text-xl flex items-center gap-3">
+            {appDetail.firstName} {appDetail.lastName}
+            {statusBadge(appDetail.status, appDetail.avgScore)}
+          </DialogTitle>
+        </DialogHeader>
+
+        <Tabs value={detailTab} onValueChange={setDetailTab}>
+          <TabsList className="w-full">
+            <TabsTrigger value="overview">Overview</TabsTrigger>
+            <TabsTrigger value="essay">Essay</TabsTrigger>
+            <TabsTrigger value="documents">Documents</TabsTrigger>
+            <TabsTrigger value="reviews">Reviews</TabsTrigger>
+            <TabsTrigger value="ai">AI Analysis</TabsTrigger>
+          </TabsList>
+
+          {/* Overview Tab */}
+          <TabsContent value="overview" className="space-y-4 mt-4">
+            <div className="flex items-center gap-2 mb-2">
+              <Badge className={appDetail.scholarshipType === "merit_jhsc" ? "bg-purple-100 text-purple-700 hover:bg-purple-100" : "bg-teal-100 text-teal-700 hover:bg-teal-100"}>
+                {appDetail.scholarshipType === "merit_jhsc" ? "JHSC Merit Scholarship" : "Need-Based Scholarship"}
+              </Badge>
+              {appDetail.division && (
+                <Badge className="bg-gray-100 text-gray-700 hover:bg-gray-100">
+                  {appDetail.division === "high_school" ? "High School" : "Middle School"}
+                </Badge>
+              )}
+            </div>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { label: "Email", value: appDetail.email },
+                { label: "Phone", value: appDetail.phone || appDetail.parentPhone || "N/A" },
+                { label: "Grade Level", value: appDetail.gradeLevel || "N/A" },
+                { label: "Current School", value: appDetail.currentSchool || "N/A" },
+                { label: "Parent/Guardian", value: appDetail.parentName || "N/A" },
+                { label: "Parent Email", value: appDetail.parentEmail || "N/A" },
+                { label: "Scholarship Type", value: appDetail.scholarshipType === "merit_jhsc" ? "JHSC Merit" : "Need-Based" },
+                { label: "Submitted", value: new Date(appDetail.createdAt).toLocaleDateString() },
+              ].map(item => (
+                <div key={item.label} className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                  <p className="text-xs" style={{ color: "#8B7D6B" }}>{item.label}</p>
+                  <p className="text-sm font-medium" style={{ color: "#1C2127" }}>{item.value}</p>
+                </div>
+              ))}
+            </div>
+            {appDetail.scholarshipType === "need_based" && appDetail.householdIncome && (
+              <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>Financial Information</p>
+                <p className="text-sm" style={{ color: "#1C2127" }}>
+                  Household Income: {appDetail.householdIncome} | Size: {appDetail.householdSize || "N/A"} | MFI: {appDetail.mfiPercentage === "100_120" ? "100-120%" : appDetail.mfiPercentage === "below_100" ? "Below 100%" : "Not sure"}
+                </p>
+              </div>
+            )}
+            {appDetail.scholarshipType === "merit_jhsc" && (
+              <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>JHSC Membership</p>
+                <p className="text-sm" style={{ color: "#1C2127" }}>Active JHSC Member: {appDetail.activeJhscMember ? "Yes" : "No"}</p>
+              </div>
+            )}
+            {appDetail.address && (
+              <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                <p className="text-xs" style={{ color: "#8B7D6B" }}>Address</p>
+                <p className="text-sm" style={{ color: "#1C2127" }}>
+                  {appDetail.address}{appDetail.city ? `, ${appDetail.city}` : ""}{appDetail.state ? `, ${appDetail.state}` : ""} {appDetail.zipCode || ""}
+                </p>
+              </div>
+            )}
+            {appDetail.financialStatement && (
+              <div className="p-3 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                <p className="text-xs mb-1" style={{ color: "#8B7D6B" }}>Financial Statement</p>
+                <p className="text-sm whitespace-pre-wrap" style={{ color: "#3D3D3D" }}>{appDetail.financialStatement}</p>
+              </div>
+            )}
+            {appDetail.referrals && appDetail.referrals.length > 0 && (
+              <div>
+                <h4 className="text-sm font-medium mb-2" style={{ color: "#1C2127" }}>Referrals</h4>
+                <div className="space-y-2">
+                  {appDetail.referrals.map((ref: any) => (
+                    <div key={ref.id} className="p-3 rounded border border-gray-200 flex items-center justify-between" style={{ background: "#FAFAF8" }}>
+                      <div>
+                        <p className="text-sm font-medium">{ref.referrerName}</p>
+                        <p className="text-xs" style={{ color: "#6B6B6B" }}>{ref.referrerEmail} &middot; {ref.relationship}</p>
+                      </div>
+                      <Users className="h-4 w-4" style={{ color: "#8B7D6B" }} />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Essay Tab */}
+          <TabsContent value="essay" className="mt-4 space-y-4">
+            {[appDetail.essay, appDetail.essay2, appDetail.essay3, appDetail.essay4].map((essayText: string | null, i: number) => (
+              essayText && (
+                <div key={i} className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                  <p className="text-xs font-medium mb-2" style={{ color: "#8B7D6B" }}>Essay {i + 1}</p>
+                  <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color: "#3D3D3D" }}>{essayText}</p>
+                </div>
+              )
+            ))}
+            {appDetail.parentStatement && (
+              <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                <p className="text-xs font-medium mb-2" style={{ color: "#8B7D6B" }}>Parent/Guardian Statement</p>
+                <p className="text-sm whitespace-pre-wrap leading-relaxed" style={{ color: "#3D3D3D" }}>{appDetail.parentStatement}</p>
+              </div>
+            )}
+          </TabsContent>
+
+          {/* Documents Tab */}
+          <TabsContent value="documents" className="mt-4 space-y-4">
+            {appDetail.files && appDetail.files.length > 0 ? (
+              <div className="space-y-2">
+                {appDetail.files.map((file: any) => (
+                  <div key={file.id} className="p-3 rounded border border-gray-200 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-4 w-4" style={{ color: "#4A6FA5" }} />
+                      <div>
+                        <p className="text-sm font-medium">{file.filename}</p>
+                        <p className="text-xs" style={{ color: "#6B6B6B" }}>{file.category} &middot; {file.uploaderName || "Unknown"}</p>
+                      </div>
+                    </div>
+                    <a href={file.fileUrl} target="_blank" rel="noopener noreferrer">
+                      <Button size="sm" variant="ghost"><ExternalLink className="h-3 w-3" /></Button>
+                    </a>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-sm text-center py-8" style={{ color: "#8B7D6B" }}>No documents uploaded yet.</p>
+            )}
+          </TabsContent>
+
+          {/* Reviews Tab */}
+          <TabsContent value="reviews" className="mt-4 space-y-4">
+            <RubricReviewForm
+              scholarshipType={appDetail.scholarshipType || "need_based"}
+              applicationId={selectedAppId!}
+              identity={identity}
+              addReviewMutation={addReviewMutation}
+            />
+            {appDetail.reviews && appDetail.reviews.length > 0 ? (
+              <div className="space-y-3">
+                <h4 className="text-sm font-medium" style={{ color: "#1C2127" }}>All Reviews ({appDetail.reviews.length})</h4>
+                {appDetail.reviews.map((review: any) => {
+                  const isOwnReview = identity && review.reviewerEmail === identity.email;
+                  const rubric = review.rubricScores ? (() => { try { return JSON.parse(review.rubricScores); } catch { return null; } })() : null;
+                  return (
+                    <div key={review.id} className={`p-4 rounded border ${isOwnReview ? 'border-blue-300 bg-blue-50/30' : 'border-gray-200'}`}>
+                      <div className="flex items-start gap-3">
+                        <div className="w-8 h-8 rounded-full flex items-center justify-center text-xs font-bold text-white" style={{ background: isOwnReview ? "#2563eb" : "#4A6FA5" }}>
+                          {review.reviewerName.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <span className="text-sm font-medium">{review.reviewerName}</span>
+                            {isOwnReview && <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 text-xs">You</Badge>}
+                            <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100">Total: {review.score}/30</Badge>
+                          </div>
+                          {isOwnReview && rubric && (
+                            <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mt-2">
+                              {Object.entries(rubric).map(([cat, score]) => (
+                                <div key={cat} className="text-xs p-1.5 rounded bg-gray-50 border">
+                                  <span style={{ color: "#8B7D6B" }}>{cat}:</span>{" "}
+                                  <span className="font-semibold">{score as number}/5</span>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                          {!isOwnReview && (
+                            <p className="text-xs mt-1" style={{ color: "#8B7D6B" }}>Detailed rubric scores visible only to reviewer</p>
+                          )}
+                          {isOwnReview && review.notes && <p className="text-sm mt-2" style={{ color: "#3D3D3D" }}>{review.notes}</p>}
+                          <p className="text-xs mt-1" style={{ color: "#8B7D6B" }}>{new Date(review.createdAt).toLocaleDateString()}</p>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-center py-4" style={{ color: "#8B7D6B" }}>No reviews yet. Be the first to review!</p>
+            )}
+            <Separator />
+            <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+              <h4 className="text-sm font-medium mb-3">Status & Score</h4>
+              <div className="grid grid-cols-2 gap-3 mb-3">
+                <div>
+                  <label className="text-xs" style={{ color: "#8B7D6B" }}>Overall Score</label>
+                  <Input type="number" min="0" max="100" value={overallScoreInput} onChange={(e) => setOverallScoreInput(e.target.value)} />
+                </div>
+                <div>
+                  <label className="text-xs" style={{ color: "#8B7D6B" }}>Status</label>
+                  <Select value={appDetail.status} onValueChange={(val) => updateStatusMutation.mutate({ id: selectedAppId!, status: val as any })}>
+                    <SelectTrigger><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="under_review">Under Review</SelectItem>
+                      <SelectItem value="shortlisted">Shortlisted</SelectItem>
+                      <SelectItem value="approved">Approved</SelectItem>
+                      <SelectItem value="denied">Denied</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+              <div className="mb-3">
+                <label className="text-xs" style={{ color: "#8B7D6B" }}>Committee Notes</label>
+                <Textarea value={committeeNotesInput} onChange={(e) => setCommitteeNotesInput(e.target.value)} rows={2} />
+              </div>
+              <Button
+                size="sm"
+                className="text-white"
+                style={{ background: "#4A6FA5" }}
+                onClick={() => updateScoreMutation.mutate({
+                  id: selectedAppId!,
+                  score: overallScoreInput ? parseInt(overallScoreInput) : null,
+                  notes: committeeNotesInput || undefined,
+                })}
+              >
+                Save
+              </Button>
+            </div>
+          </TabsContent>
+
+          {/* AI Analysis Tab */}
+          <TabsContent value="ai" className="mt-4">
+            {aiData ? (
+              <div className="space-y-4">
+                <div className="p-4 rounded border border-gray-200" style={{ background: "#FAFAF8" }}>
+                  <p className="text-sm leading-relaxed" style={{ color: "#3D3D3D" }}>{aiData.summary}</p>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Badge className={
+                    aiData.recommendation === "Strong Candidate" ? "bg-emerald-100 text-emerald-700 hover:bg-emerald-100" :
+                    aiData.recommendation === "Weak Candidate" ? "bg-red-100 text-red-700 hover:bg-red-100" :
+                    "bg-yellow-100 text-yellow-700 hover:bg-yellow-100"
+                  }>
+                    {aiData.recommendation}
+                  </Badge>
+                  <span className="text-sm font-medium" style={{ color: "#4A6FA5" }}>Suggested Score: {aiData.recommendedScore}/100</span>
+                </div>
+                {aiData.keyPoints && aiData.keyPoints.length > 0 && (
+                  <div>
+                    <h4 className="text-sm font-medium mb-2">Key Points</h4>
+                    <ul className="space-y-1">
+                      {aiData.keyPoints.map((p: string, i: number) => (
+                        <li key={i} className="text-sm flex items-start gap-2" style={{ color: "#3D3D3D" }}>
+                          <span className="mt-1.5 w-1.5 h-1.5 rounded-full flex-shrink-0" style={{ background: "#4A6FA5" }} />
+                          {p}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                <div className="grid grid-cols-2 gap-3">
+                  {aiData.strengths && aiData.strengths.length > 0 && (
+                    <div className="p-3 rounded border border-green-200 bg-green-50">
+                      <h5 className="text-xs font-medium text-green-700 mb-2">Strengths</h5>
+                      <ul className="space-y-1">
+                        {aiData.strengths.map((s: string, i: number) => (
+                          <li key={i} className="text-xs text-green-800 flex items-start gap-1">
+                            <CheckCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />{s}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                  {aiData.weaknesses && aiData.weaknesses.length > 0 && (
+                    <div className="p-3 rounded border border-red-200 bg-red-50">
+                      <h5 className="text-xs font-medium text-red-700 mb-2">Areas of Concern</h5>
+                      <ul className="space-y-1">
+                        {aiData.weaknesses.map((w: string, i: number) => (
+                          <li key={i} className="text-xs text-red-800 flex items-start gap-1">
+                            <XCircle className="h-3 w-3 mt-0.5 flex-shrink-0" />{w}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+                <Button size="sm" variant="outline" onClick={() => aiAnalyzeMutation.mutate({ id: selectedAppId! })} disabled={aiAnalyzeMutation.isPending}>
+                  {aiAnalyzeMutation.isPending ? "Regenerating..." : "Regenerate"}
+                </Button>
+                {appDetail.aiAnalysisGeneratedAt && (
+                  <p className="text-xs" style={{ color: "#8B7D6B" }}>Generated: {new Date(appDetail.aiAnalysisGeneratedAt).toLocaleString()}</p>
+                )}
+              </div>
+            ) : (
+              <div className="text-center py-12">
+                <Sparkles className="h-12 w-12 mx-auto mb-4" style={{ color: "#D4A574" }} />
+                <h4 className="font-medium mb-2" style={{ color: "#1C2127" }}>AI-Powered Analysis</h4>
+                <p className="text-sm mb-4" style={{ color: "#6B6B6B" }}>Generate an AI analysis of this application including strengths, concerns, and a recommended score.</p>
+                <Button
+                  className="text-white"
+                  style={{ background: "#4A6FA5" }}
+                  onClick={() => aiAnalyzeMutation.mutate({ id: selectedAppId! })}
+                  disabled={aiAnalyzeMutation.isPending}
+                >
+                  {aiAnalyzeMutation.isPending ? "Generating..." : "Generate Analysis"}
+                </Button>
+              </div>
+            )}
+          </TabsContent>
+        </Tabs>
+      </DialogContent>
+    </Dialog>
   );
 }

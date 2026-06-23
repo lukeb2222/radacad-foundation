@@ -143,9 +143,9 @@ export default function Home() {
               </p>
               <ul className="space-y-3">
                 {[
-                  "Personalized learning plans for every student",
-                  "One-on-one academic coaching sessions",
-                  "Support for online school coursework",
+                  "Every student receives a personalized learning plan tailored to their goals.",
+                  "One-on-one academic coaching sessions keep students on track and motivated.",
+                  "We provide dedicated support for online school coursework and assignments.",
                 ].map((item, i) => (
                   <li key={i} className="flex items-center gap-3 text-white/90">
                     <CheckCircle className="h-5 w-5 text-white/70 shrink-0" />

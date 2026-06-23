@@ -184,7 +184,8 @@ export const appRouter = router({
         });
 
         const sessionParams: any = {
-          payment_method_types: ["card"],
+          // Omitting payment_method_types lets Stripe use all methods enabled in the Dashboard
+          // (ACH, Google Pay, Apple Pay, etc.) — configure them at stripe.com/settings/payment-methods
           mode: input.frequency === "monthly" ? "subscription" : "payment",
           customer_email: input.email,
           success_url: `${input.origin}/donate/success?session_id={CHECKOUT_SESSION_ID}`,

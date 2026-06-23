@@ -24,7 +24,6 @@ export default function Footer() {
               <Link href="/" className="text-sm text-gray-600 hover:text-[var(--radacad-teal)] no-underline transition-colors">Home</Link>
               <Link href="/apply" className="text-sm text-gray-600 hover:text-[var(--radacad-teal)] no-underline transition-colors">Apply for Scholarship</Link>
               <Link href="/donate" className="text-sm text-gray-600 hover:text-[var(--radacad-teal)] no-underline transition-colors">Donate</Link>
-              <Link href="/contact" className="text-sm text-gray-600 hover:text-[var(--radacad-teal)] no-underline transition-colors">Contact</Link>
               <a href="https://www.radicalmindsacademy.org" target="_blank" rel="noopener noreferrer" className="text-sm text-gray-600 hover:text-[var(--radacad-teal)] no-underline transition-colors">
                 RadAcad Main Site
               </a>

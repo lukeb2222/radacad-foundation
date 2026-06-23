@@ -317,8 +317,7 @@ export default function Apply() {
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">Need-Based Scholarship</h3>
                   <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                    For families who demonstrate financial need. Automatic 10-20% discounts based on household income,
-                    with additional aid available for exceptional need.
+                    These scholarships are for families who demonstrate financial need. Students receive automatic 10-20% discounts based on household income, with additional aid available for exceptional need.
                   </p>
                   <ul className="text-xs text-gray-500 text-left space-y-1">
                     <li>• Household financial information required</li>
@@ -340,8 +339,7 @@ export default function Apply() {
                   </div>
                   <h3 className="text-xl font-bold text-gray-900 mb-3">JHSC Merit Scholarship</h3>
                   <p className="text-sm text-gray-600 leading-relaxed mb-4">
-                    For active Jackson Hole Ski & Snowboard Club members who demonstrate excellence in academics and athletics.
-                    Awards of 25-50% tuition.
+                    These scholarships are for active Jackson Hole Ski & Snowboard Club members who demonstrate excellence in academics and athletics. Awards cover 25-50% of tuition.
                   </p>
                   <ul className="text-xs text-gray-500 text-left space-y-1">
                     <li>• Must be an active JHSC member</li>
